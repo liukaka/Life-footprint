@@ -1,0 +1,451 @@
+iframe是框架的一种形式，也比较常用到。
+Iframe用法精析 
+<iframe frameborder=0 width=170 height=100 marginheight=0 marginwidth=0 scrolling=no src="move-ad.htm"></iframe> 
+<IFRAME>用于设置文本或图形的浮动图文框或容器。 
+BORDER 
+<IFRAME BORDER="3"></IFRAME> 
+设定围绕图文框的边缘宽度 
+FRAMEBODER 
+<IFRAME FRAMEBODER="0"></IFRAME> 
+设置边框是不否为3维（0=否，1=是） 
+HEIGHT,WIDTH 
+<IFRAME HEIGHT="31" WIDTH="88"></IFRAME> 
+设质边框的宽度和高度 
+SCROLLING 
+<IFRAME SCROLLING="NO"></IFRAME> 
+是否有滚动条（YES,NO,AUTO) 
+SRC 
+<IFRAME SRC="GIRL.GIF"></IFRAME> 
+指定IFRAME调用的文件或图片(HTML,HTM,GIF,JPEG,JPG,PNG,TXT,*.*) 
+“画中画”效果--谈IFRAME标签的使用 
+纵观时下网站，本来网速就有些慢，可是几乎每页都要放什么Banner，栏目图片，版权等一大堆雷同的东西，当然，出于网站风格统一、广告效应的需要，本无可厚非，可毕竟让用户的钱包为这些“点缀“的东西”日益消得钱憔悴”了，有没有办法，让这些雷同的东西一次下载后就不用再下载，而只下载那些内容有变化区域的网页内容呢？ 
+答案很肯定：应用Iframe标记！ 
+一、Iframe标记的使用 
+提起Iframe，可能你早已将之扔到“被遗忘的角落”了，不过，说起其兄弟Frame就不会陌生了。Frame标记即帧标记，我们所说的多帧结构就是在一个浏览器窗口中显示多个HTML文件。现在，我们遇到一种很现实的情况：如有一个教程，是一节一节地上，每页末尾做一个“上一节“、“下一节“的链接，除了每节教程内容不同之外，页面其它部分内容都是相同的，如果一页一页地做笨页面，这似乎太让人厌烦了，这时突发奇想，如果有一种方法让页面其它地方不变，只将教程做成一页一页的内容页，不含其它内容，在点击上下翻页链接时，只改变教程内容部分，其它保持不变，这样，一是省时，另则以后如教程有个三长两短的变动，也很方便，不致于牵一发而动全军了;更重要的是将那些广告Banner、栏目列表、导航等几乎每页的都有的东西只下载一次后就不再下载了。 Iframe标记，又叫浮动帧标记，你可以用它将一个HTML文档嵌入在一个HTML中显示。它不同于Frame标记最大的特征即这个标记所引用的 HTML文件不是与另外的HTML文件相互独立显示，而是可以直接嵌入在一个HTML文件中，与这个HTML文件内容相互融合，成为一个整体，另外，还可以多次在一个页面内显示同一内容，而不必重复写内容，一个形象的比喻即“画中画“电视。 
+现在我们谈一下Iframe标记的使用。 
+Iframe标记的使用格式是: 
+
+复制代码代码如下:
+
+<Iframe src="URL" width="x" height="x" scrolling="[OPTION]" frameborder="x"></iframe> 
+
+src：文件的路径，既可是HTML文件，也可以是文本、ASP等； 
+width、height："画中画"区域的宽与高； 
+scrolling:当SRC的指定的HTML文件在指定的区域不显不完时，滚动选项，如果设置为NO，则不出现滚动条；如为Auto：则自动出现滚动条；如为Yes，则显示; 
+FrameBorder：区域边框的宽度，为了让“画中画“与邻近的内容相融合，常设置为0。 
+比如: 
+
+复制代码代码如下:
+
+<Iframe src="http://www.jb51.net";; width="250" height="200" scrolling="no" frameborder="0"></iframe> 
+
+二、父窗体与浮动帧之间的相互控制 在脚本语言与对象层次中，包含Iframe的窗口我们称之为父窗体，而浮动帧则称为子窗体，弄清这两者的关系很重要，因为要在父窗体中访问子窗体或相反都必须清楚对象层次，才能通过程序来访问并控制窗体。 
+1、在父窗体中访问并控制子窗体中的对象 
+在父窗体中，Iframe即子窗体是document对象的一个子对象，可以直接在脚本中访问子窗体中的对象。 
+现在就有一个问题，即，我们怎样来控制这个Iframe，这里需要讲一下Iframe对象。当我们给这个标记设置了ID 属性后，就可通过文档对象模型DOM对Iframe所含的HTML进行一系列控制。 
+比如在example.htm里嵌入test.htm文件，并控制test.htm里一些标记对象： 
+
+复制代码代码如下:
+
+<Iframe src="test.htm" id="test" width="250" height="200" scrolling="no" frameborder="0"></iframe> 
+test.htm文件代码为: 
+<html> 
+<body> 
+<h1 id="myH1">hello,my boy</h1> 
+</body> 
+</html> 
+
+如我们要改变ID号为myH1的H1标记里的文字为hello,my dear，则可用: 
+document.myH1.innerText="hello,my dear"(其中，document可省) 
+在example.htm文件中，Iframe标记对象所指的子窗体与一般的DHTML对象模型一致，对对象访问控制方式一样，就不再赘述。 
+2 、在子窗体中访问并控制父窗体中对象 
+在子窗体中我们可以通过其parent即父（双亲）对象来访问父窗口中的对象。 
+如example.htm： 
+
+复制代码代码如下:
+
+<html> 
+<body onclick="alert(tt.myH1.innerHTML)"> 
+<Iframe name="tt" src="frame1.htm" width="250" height="200" scrolling="no" frameborder="0"></iframe> 
+<h1 id="myH2">hello,my wife</h1> 
+</body> 
+</html> 
+
+如果要在frame1.htm中访问ID号为myH2中的标题文字并将之改为"hello,my friend"，我们就可以这样写： 
+parent.myH2.innerText="hello,my friend" 
+这里parent对象就代表当前窗体(example.htm所在窗体)，要在子窗体中访问父窗体中的对象，无一例外都通过parent对象来进行。 
+Iframe虽然内嵌在另一个HTML文件中，但它保持相对的独立，是一个“独立王国“哟，在单一HTML中的特性同样适用于浮动帧中。 
+试想一下，通过Iframe标记，我们可将那些不变的内容以Iframe来表示，这样，不必重复写相同的内容，这有点象程序设计中的过程或函数，减省了多少繁琐的手工劳动！另外，至关重要的是，它使页面的修改更为可行，因为，不必因为版式的调整而修改每个页面，你只需修改一个父窗体的版式即可了。 
+有一点要注意，Nestscape浏览器不支持Iframe标记，但在时下IE的天下，这似乎也无大碍，广泛采用Iframe标记，既为自己(网站)着了想，又为网友节省了网费，何乐而不为？ 
+例子 
+
+复制代码代码如下:
+
+<iframe src="页面" width="宽度" height="高度" align="排列可以是left或right,center" scrolling="是否有滚动条可以填no或yes" ></iframe> 
+<IFRAME frameBorder=0 frameSpacing=0 height=25 marginHeight=0 marginWidth=0 scrolling=no name=main src="bgm/bgm.html" width=300></IFRAME> 
+
+2::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+用了iframe后 发现滚动条不漂亮 想用2个图片来代替↑↓ 
+应该怎么实现呢？ 
+回答： 
+用下列代码替换网页的 
+
+复制代码代码如下:
+
+<title>..</title> 
+<SCRIPT LANGUAGE="javascript"> 
+function scroll(n) 
+{temp=n; 
+Out1.scrollTop=Out1.scrollTop+temp; 
+if (temp==0) return; 
+setTimeout("scroll(temp)",80); 
+} 
+</SCRIPT> 
+<TABLE WIDTH="330"> 
+<TR> 
+<TD WIDTH="304" VALIGN="TOP" ROWSPAN="2" > 
+<DIV ID=Out1 STYLE="width:100%; height:100;overflow: hidden ;border-style:dashed;border-width: 1px,1px,1px,1px;"> 
+文字
+文字
+
+文字
+
+文字
+
+文字 
+
+
+</DIV> 
+</TD> 
+<TD WIDTH="14" VALIGN="TOP"><IMG SRC="photo/up0605.gif" WIDTH="14" HEIGHT ="20" onmouseover="scroll(-1)" onmouseout="scroll(0)" onmousedown="scroll (-3)" BORDER="0" ALT="按下鼠标速度会更快！"></TD> 
+</TR> 
+<TR> 
+<TD WIDTH="14" VALIGN="BOTTOM"><IMG SRC="photo/down0605.gif" onmouseover ="scroll(1)" onmouseout="scroll(0)" onmousedown="scroll(3)" BORDER="0" WIDTH ="15" HEIGHT="21" ALT="按下鼠标速度会更快！"></TD> 
+</TR> 
+</TABLE> 
+
+内框架Iframe的使用 
+使用Iframe可以在一人表格内调用一个外部文件，是非常有用的。本网站在很多页面上都使用了iframe效果。 
+现在我们学一下Iframe标记的使用。 
+Iframe标记的使用格式是: 
+
+复制代码代码如下:
+
+<Iframe src="URL" width="x" height="x" scrolling="[OPTION]" frameborder="x" name="main"></iframe> 
+src：文件的路径，既可是HTML文件，也可以是文本、ASP等； 
+width、height："内部框架"区域的宽与高； 
+scrolling:当SRC的指定的HTML文件在指定的区域不显不完时，滚动选项，如果设置为NO，则不出现滚动条；如为Auto：则自动出现滚动条；如为Yes，则显示; 
+FrameBorder：区域边框的宽度，为了让“内部框架“与邻近的内容相融合，常设置为0。 
+name:框架的名字，用来进行识别。 
+比如: 
+<Iframe src="http://s.jb51.net" width="250" height="200" scrolling="Auto" frameborder="0" name="main"></iframe> 
+当你想用父框架控制内部框架时，可以使用： target="框架的名字"来控制。 
+IFrame也可以编辑文字 
+有没有想过除了表单(<form>)之外还有其它的网页元素可以编辑文字呢？只要使用IFrame的隐藏的一个属性就可以使IFrame成为一个文本编辑器。 
+<html> 
+<body onload="editer.document.designMode='On'"> 
+<IFrame ID="editer"></IFrame> 
+</body> 
+</html> 
+其中designMode属性表示IFrame的设计模式的状态（开/关），还在犹豫什么呢，快试试吧！ 
+只要巧妙的利用这一特性就可以制作很多意想不到的效果。如果下面我们来做一个图片编辑器。 
+<html> 
+<body onload="imgEditer.document.designMode='On';imgEditer.document.write('<img src=图片.gif>')"> 
+<IFrame id="imgEditer"></IFrame> 
+</body> 
+</html> 
+
+下面使更多的补充：
+<iframe>是框架的一种形式，也比较常用到。 
+　　例子1。 
+<iframe width=420 height=330 frameborder=0 scrolling=auto src=URL></iframe> 
+不用多说了。 
+　　width插入页的宽；height插入页的高；scrolling 是否显示页面滚动条（可选的参数为 auto、yes、no，如果省略这个参数，则默认为auto）；frameborder 边框大小； 
+　　注意：URL建议用绝对路径 
+　　传说中百DU用：<iframe width=0 height=0 frameborder=0 scrolling=auto src=http://WWW.jb51.net></iframe> 
+黑了88*8。。。 
+　　例子2。 
+　　如果一个页面里面有框架。。随便点页面里的连接，要求在这个<iframe> 里打开。在iframe 中加入name=** （**自己设定） 
+<iframe name=** ></iframe> 
+　　然后在修改默认打开模式，：网页HEAD中加上<a href=URL target=**>或部分连接的目标框架设为（**） 
+　　例子3。 
+　　要插入一个页面。要求只拿中间一部分。其他的都不要。，。。 
+　　代码： 
+<iframe name=123 align=middle marginwidth=0 marginheight=0 vspace=-170 hspace=0 src="http://www.jb51.net/" frameborder=no scrolling=no width=776 height=2500></iframe> 
+　　控制插入页被框架覆盖的深度 marginwidth=0 marginheight=0；控制框架覆盖上部分的深度 vspace=-170 
+　　scrolling滚动条要否（auto、yes、no） frameborder框架的边框大小，width=776 height=2500此框架的大小。 
+　　一、页面内加入iframe 
+<iframe width=420 height=330 frameborder=0 scrolling=auto src=URL></iframe>， 
+scrolling表示是否显示页面滚动条，可选的参数为auto、yes、no，如果省略这个参数，则默认为auto。 
+　　二、超链接指向这个嵌入的网页，只要给这个iframe命名就可以了。方法是<iframe name=**>，例如我命名为aa，写入这句HTML语言<iframe width=420 height=330 name=aa frameborder=0 src=http://www.cctv.com></iframe>，然后，网页上的超链接语句应该写为：<a href=URL target=aa> 
+　　三、如果把frameborder设为1，效果就像文本框一样 
+　　透明的IFRAME的用法 
+　　必需IE5.5以上版本才支持 
+　　在transparentBody.htm文件的<body>标签中，我已经加入了style="background-color=transparent" 通过以下四种IFRAME的写法我想大概你对iframe背景透明效果的实现方法应该会有个清晰的了解： 
+<IFRAME ID="Frame1" SRC="transparentBody.htm" allowTransparency="true"></IFRAME> 
+<IFRAME ID="Frame2" SRC="transparentBody.htm" allowTransparency="true" STYLE="background-color: green"> </IFRAME> 
+<IFRAME ID="Frame3" SRC="transparentBody.htm"></IFRAME> 
+<IFRAME ID="Frame4" SRC="transparentBody.htm" STYLE="background-color: green"> </IFRAME> 
+重点1：利用javascript指定iframe的src并重新加载该iframe(见本文最下面我的项目) 
+难点1：设置iframe的背景色 
+a.htm 
+<script> 
+function setBG(){ 
+var strColor=document.bgColor; 
+frm.document.bgColor=strColor; 
+} 
+</script> 
+<body style='background-color:red' onload='setBG()'> 
+<iframe src='about:blank' name=frm></iframe> 
+难点2： 
+窗口与浮动帧之间的相互控制 
+在脚本语言与对象层次中，包含Iframe的窗口我们称之为父窗体，而浮动帧则称为子窗体，弄清这两者的关系很重要，因为要在父窗体中访问子窗体或相反都必须清楚对象层次，才能通过程序来访问并控制窗体。 
+　　1、在父窗体中访问并控制子窗体中的对象 
+　　在父窗体中，Iframe即子窗体是document对象的一个子对象，可以直接在脚本中访问子窗体中的对象。 
+　　现在就有一个问题，即，我们怎样来控制这个Iframe，这里需要讲一下Iframe对象。当我们给这个标记设置了ID 属性后，就可通过文档对象模型DOM对Iframe所含的HTML进行一系列控制。 
+　　比如在example.htm里嵌入test.htm文件，并控制test.htm里一些标记对象： 
+　　<Iframe src="test.htm" id="test" width="250" height="200" scrolling="no" frameborder="0"></iframe> 
+test.htm文件代码为: 
+　　<html> 
+　　　<body> 
+　　　　<h1 id="myH1">hello,my boy</h1> 
+　　　</body> 
+　　</html> 
+　　如我们要改变ID号为myH1的H1标记里的文字为hello,my dear，则可用: 
+　　document.myH1.innerText="hello,my dear"(其中，document可省) 
+　　在example.htm文件中，Iframe标记对象所指的子窗体与一般的DHTML对象模型一致，对对象访问控制方式一样，就不再赘述。 
+　　2、在子窗体中访问并控制父窗体中对象 
+　　在子窗体中我们可以通过其parent即父（双亲）对象来访问父窗口中的对象。 
+　　如example.htm： 
+　　<html> 
+　　　<body onclick="alert(tt.myH1.innerHTML)"> 
+　　　　<Iframe name="tt" src="frame1.htm" width="250" height="200" scrolling="no" frameborder="0"></iframe> 
+　　　　<h1 id="myH2">hello,my wife</h1> 
+　　　</body> 
+　　</html> 
+　　如果要在frame1.htm中访问ID号为myH2中的标题文字并将之改为"hello,my friend"，我们就可以这样写： 
+　　parent.myH2.innerText="hello,my friend" 
+或者parent.document.getElementById("myH2").innerText="hello,my friend" 
+　　这里parent对象就代表当前窗体(example.htm所在窗体)，要在子窗体中访问父窗体中的对象，无一例外都通过parent对象来进行。 
+3:frame的一个子元素访问frame的另一个子元素 
+例如：框架文件frame.html中嵌入了另外两个html文件 
+<div styleClass="basewnd"> 
+<!-- 搜索 --> 
+<div id="search" name="test" align="center" class="top_list_home"> 
+<iframe id="frameSearch" name="search" src="Search.html" frameBorder="0" scrolling="no" width="195px" height="150px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 单位目录树 --> 
+<div align="center" class="welcome_tag_home"> 
+<iframe src="DirectoryTree.html" frameBorder="0" scrolling="no" width="195px" height="427px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+</div> 
+那么现在要在DirectoryTree.html文件中访问Search.html文件中的一个id为section的<font></font>标签的innerHTML属性，则可以这样： 
+alert(parent.document.search.section.innerHTML), 
+其中search是“搜索”div的id，或者： 
+alert(parent.document.getElementById("search").section.innerHTML), 
+或者也可以这样： 
+alert(parent.document.frames["frameSublist"].name)(这是直接访问iframe) 
+　　Iframe虽然内嵌在另一个HTML文件中，但它保持相对的独立，是一个“独立王国“哟，在单一HTML中的特性同样适用于浮动帧中。 
+　　试想一下，通过Iframe标记，我们可将那些不变的内容以Iframe来表示，这样，不必重复写相同的内容，这有点象程序设计中的过程或函数，减省了多少繁琐的手工劳动！另外，至关重要的是，它使页面的修改更为可行，因为，不必因为版式的调整而修改每个页面，你只需修改一个父窗体的版式即可了。 
+　　要注意的是，Nestscape6.0之前版本不支持Iframe标记。 
+　　例子： 
+1::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+<iframe src="页面" width="宽度" height="高度" align="排列可以是left或right,center" scrolling="是否有滚动条可以填no或yes"></iframe> 
+<IFRAME frameBorder=0 frameSpacing=0 height=25 marginHeight=0 marginWidth=0 scrolling=no name=main src="/bgm/bgm.html" width=300></IFRAME> 
+2::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+用了iframe后 发现滚动条不漂亮 想用2个图片来代替↑↓ 
+应该怎么实现呢？ 
+回答： 
+用下列代码替换网页的<title>..</title> 
+<SCRIPT LANGUAGE="javascript"> 
+function scroll(n) 
+{temp=n; 
+Out1.scrollTop=Out1.scrollTop+temp; 
+if (temp==0) return; 
+setTimeout("scroll(temp)",80); 
+} 
+</SCRIPT> 
+<TABLE WIDTH="330"> 
+<TR> 
+<TD WIDTH="304" VALIGN="TOP" ROWSPAN="2" > 
+<DIV ID=Out1 STYLE="width:100%; height:100;overflow: hidden ;border-style:dashed;border-width: 1px,1px,1px,1px;"> 
+文字<BR> 文字<BR> 
+文字<BR> 
+文字<BR> 
+文字 
+<BR> 
+<BR> 
+</DIV> 
+</TD> 
+<TD WIDTH="14" VALIGN="TOP"><IMG SRC="photo/up0605.gif" WIDTH="14" HEIGHT="20" onmouseover="scroll(-1)" onmouseout="scroll(0)" onmousedown="scroll(-3)" BORDER="0" ALT="按下鼠标速度会更快！"></TD> 
+</TR> 
+<TR> 
+<TD WIDTH="14" VALIGN="BOTTOM"><IMG SRC="photo/down0605.gif" onmouseover="scroll(1)" onmouseout="scroll(0)" onmousedown="scroll(3)" BORDER="0" WIDTH="15" HEIGHT="21" ALT="按下鼠标速度会更快！"></TD> 
+</TR> 
+</TABLE> 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
+下面这段代码可以实现IFrame自适应高度，即随着页面的长度，自动适应以免除页面和IFrame同时出现滚动条。 
+源代码如下 
+<script type="text/javascript"> 
+//** iframe自动适应页面 **// 
+//输入你希望根据页面高度自动调整高度的iframe的名称的列表 
+//用逗号把每个iframe的ID分隔. 例如: ["myframe1", "myframe2"]，可以只有一个窗体，则不用逗号。 
+//定义iframe的ID 
+var iframeids=["test"] 
+//如果用户的浏览器不支持iframe是否将iframe隐藏 yes 表示隐藏，no表示不隐藏 
+var iframehide="yes" 
+function dyniframesize() 
+{ 
+var dyniframe=new Array() 
+for (i=0; i<iframeids.length; i++) 
+{ 
+if (document.getElementById) 
+{ 
+//自动调整iframe高度 
+dyniframe[dyniframe.length] = document.getElementById(iframeids); 
+if (dyniframe && !window.opera) 
+{ 
+dyniframe.style.display="block" 
+if (dyniframe.contentDocument && dyniframe.contentDocument.body.offsetHeight) //如果用户的浏览器是NetScape 
+dyniframe.height = dyniframe.contentDocument.body.offsetHeight; 
+else if (dyniframe.Document && dyniframe.Document.body.scrollHeight) //如果用户的浏览器是IE 
+dyniframe.height = dyniframe.Document.body.scrollHeight; 
+} 
+} 
+//根据设定的参数来处理不支持iframe的浏览器的显示问题 
+if ((document.all || document.getElementById) && iframehide=="no") 
+{ 
+var tempobj=document.all? document.all[iframeids] : document.getElementById(iframeids) 
+tempobj.style.display="block" 
+} 
+} 
+} 
+if (window.addEventListener) 
+window.addEventListener("load", dyniframesize, false) 
+else if (window.attachEvent) 
+window.attachEvent("onload", dyniframesize) 
+else 
+window.onload=dyniframesize 
+</script> 
+HTML <iframe> 标签 
+定义和用法 
+iframe 元素会创建一个包含另外一个文档的内联框架。 
+HTML 与 XHTML 之间的差异 
+NONE 
+可选的属性 
+DTD 指示此属性允许在哪种 DTD 中使用。S=Strict, T=Transitional, F=Frameset. 
+属性 值 描述 DTD 
+align left 
+right 
+top 
+middle 
+bottom 
+规定如何根据周围的文本来排列此框架。 TF 
+frameborder 1 
+0 
+规定是否显示框架的边框。 TF 
+height pixels 
+% 
+定义 iframe 的高度。 TF 
+longdesc URL 描述此框架内容的长描述的URL。 TF 
+marginheight pixels 定义 iframe 的顶部和底部的边距。 TF 
+marginwidth pixels 定义 iframe 的左侧和右侧的边距。 TF 
+name frame_name 规定 iframe 的唯一名称 （以便在脚本中使用）。 TF 
+scrolling yes 
+no 
+auto 
+定义滚动条。 TF 
+src URL 在 iframe 中显示文档的 URL。 TF 
+width pixels 
+% 
+定义 iframe 的宽度。 TF 
+以下是本人自己在实际项目开发时利用frame写的一段源代码，仅供参考： 
+主文件（框架）： 
+<html> 
+<head> 
+<title>教育局资源管理系统</title> 
+<script src="resources/js/DirectoryTree/DirectoryTree.js"></script> 
+<script src="resources/js/date.js"></script> 
+<link rel="stylesheet" type="text/css" href="resources/css/frame.css"> 
+<link rel="stylesheet" type="text/css" href="resources/css/global.css"> 
+<script language="javascript"> 
+function setBgColor() 
+{ 
+var bg=document.bgColor 
+bottom.document.bgColor=bg 
+} 
+</script> 
+</head> 
+<body bgcolor="#f9edff" onload="setBgColor()"> 
+<div styleClass="basewnd"> 
+<!-- LOGO --> 
+<div align="center" class="flag"> 
+<iframe src="resources/HTMLFolders/Logo.html" frameBorder="0" scrolling="no" width="950px" height="115px" marginheight="0"></iframe> 
+</div> 
+<!-- 用户登陆 --> 
+<div align="center" class="user"> 
+<iframe src="resources/HTMLFolders/UserLogin.html" frameBorder="0" scrolling="no" width="195px" height="150px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 搜索 --> 
+<div id="search" name="test" align="center" class="top_list_home"> 
+<iframe id="frameSearch" name="search" src="resources/HTMLFolders/Search.html" frameBorder="0" scrolling="no" width="195px" height="150px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 导航条 --> 
+<div align="center" class="navigation"> 
+<iframe src="resources/HTMLFolders/Navigation.html" frameBorder="0" scrolling="no" width="950px" height="25px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 最新主题列表 --> 
+<div align="center" class="newest_topic"> 
+<iframe src="resources/HTMLFolders/Sublist.html" frameBorder="0" scrolling="no" width="540px" height="427px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 单位目录树 --> 
+<div align="center" class="welcome_tag_home"> 
+<iframe src="resources/HTMLFolders/DirectoryTree.html" frameBorder="0" scrolling="no" width="195px" height="427px" marginheight="0" marginwidth="0"></iframe> 
+</div> 
+<!-- 页尾 --> 
+<div align="center" class="rights_home"> 
+<iframe id="bottom" name="bottom" src="resources/HTMLFolders/Bottom.html" frameBorder="0" scrolling="no" width="950px" height="100px" marginheight="0" marginwidth="0" allowTransparency="true" style="background-color: red"></iframe> 
+</div> 
+</div> 
+</body> 
+</html> 
+被引用的文件UserLogin.html： 
+<link rel="stylesheet" type="text/css" href="../css/global.css"> 
+<table border="0" align="left" width="193" cellpadding="1" cellspacing="0" style="border-style:solid;border-width:1px;border-color:#eeeeee;"> 
+<tr><td> 
+<table border="0" align="left" width="190" cellpadding="0" cellspacing="0"> 
+<tr> 
+<td align="left" valign="middle" width="20" height="25" class="tdfnt12px" background="../images/title_bar2.png" > 
+</td> 
+<td align="left" valign="bottom" height="25" class="tdfnt12px" background="../images/title_bar2.png"> 
+<font style="height:18px;font-family:宋体;font-size:14px;">&nbsp;<b>会员登录</b></font> 
+</td> 
+</tr> 
+</table> 
+</td></tr> 
+</table> 
+<div id="divLogin" style="visibility:visible;position:absolute;left:10px;top:30px"> 
+<table border="0" align="left" width="193" cellpadding="1" cellspacing="0" style="border-style:solid;border-width:0px;border-color:#eeeeee;"> 
+<tr> 
+<td align="left" valign="bottom" height="45"><font class="normal">用户名：</font> 
+<td valign="bottom"><input type="text" name="userAreaUserName" id="userAreaUserName" class="id" maxlength="16"/></td> 
+</tr> 
+<tr> 
+<td align="left" height="40"><font class="normal">密码：</font> 
+<td><input type="password" name="userAreaUserPwd" id="userAreaUserPwd" class="pwd" maxlength="16"/></td> 
+</tr> 
+<tr> 
+<td align="center" colspan="2" class="tdfnt12px"> 
+<input type="submit" value="登录" style="color:black;border-color:skyblue;border-style:solid;border-width:0px;vertical-align:middle;font-family:宋体;width:68px;height:24px;background:url(resources/images/ButtonBg02.png);"/> 
+</td> 
+</tr> 
+</table> 
+</div> 
+现在假设“最新主题列表”文件中有一个超链接，点击其，包含“最新主题列表”的iframe就重新加载，此时需要利用javascript来实现： 
+<a href="" onclick="redirect(); return false">www.baidu.com</a> 
+<script language="javascript"> 
+function redirect() 
+{ 
+parent.document.frames["frameSublist"].location.href="www.baidu.com" 
+} 
+</script>
