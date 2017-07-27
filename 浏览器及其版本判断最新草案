@@ -1,0 +1,53 @@
+  getExplorerInfo();
+    function getExplorerInfo() {
+        var explorer = navigator.userAgent.toLowerCase() ;
+        var explorerIE = navigator.appName.indexOf("Microsoft");
+    //ie
+        alert(explorer)
+        if (explorer.indexOf("msie") >= 0 && explorerIE >= 0) {
+            var ver=explorer.match(/msie ([\d.]+)/)[1];
+            if(ver == 7||ver == 6||ver == 5||ver == 4){
+                alert("type:IE\nversion:"+ ver +"");
+            }
+        }
+       else if(~explorer.indexOf('trident') && ~explorer.indexOf('rv')){
+            var ver = explorer.match(/rv:(\d+\.\d+)/)[1];
+            alert("type:Edge\nversion:"+ ver +"");
+        }
+    //firefox
+        else if (explorer.indexOf("firefox") >= 0) {
+            var ver=explorer.match(/firefox\/([\d.]+)/)[1];
+            var ver2 = ver.substring(0,2);
+            if(ver2 == 55||ver2 == 56||ver2 == 57||ver2 == 54){
+                alert("type:Firefox\nversion:"+ ver +"");
+            }else{
+                alert("type:Firefox\nversion:"+ ver +"");
+            }
+        }
+    //Chrome
+        else if(explorer.indexOf("chrome") >= 0&&explorer.indexOf("opr") < 0&&explorer.indexOf("wow64") < 0){
+            var ver=explorer.match(/chrome\/([\d.]+)/)[1];
+            var ver2 = ver.substring(0,2);
+            if(ver2 == 55||ver2 == 56||ver2 == 57||ver2 == 54){
+                return false;
+            }else{
+                alert("type:Chrome\nversion:"+ ver +"");
+            }
+        }
+        //360
+        else if(explorer.indexOf("chrome") >= 0&&explorer.indexOf("opr") < 0&&explorer.indexOf("wow64") >= 0){
+            var ver=explorer.match(/chrome\/([\d.]+)/)[1];
+            var ver2 = ver.substring(0,2);
+                alert("type:360浏览器\nversion:"+ ver +"");
+        }
+    //Opera
+        else if(explorer.indexOf("opr") >= 0){
+            var ver=explorer.match(/opr.([\d.]+)/)[1];
+            alert("type:Opera\nversion:"+ ver +"");
+        }
+    //Safari
+        else if(explorer.indexOf("safari") >= 0){
+            var ver=explorer.match(/version\/([\d.]+)/)[1];
+            alert("type:Safari\nversion:"+ ver +"");
+        }
+    }
