@@ -1,0 +1,17 @@
+在传统的Javascript里，当我们对某个页面元素进行某种操作前，最好先判断这个元素是否存在。原因是对一个不存在的元素进行操作是不允许的。例如：
+document.getElementById("someID").innerText("hi");
+如果ID为"someID"的元素不存在，我们将得到Javascript运行错误：document.getElementById("someID") is null
+正确的写法应该是：
+obj = document.getElementById("someID");
+if (obj){
+  obj.innerText("hi");
+}
+那么在jQuery，我们如何判断页面元素存在与否呢？如果参照上面的传统Javascript的写法，我们第一个想到的办法一定是：
+if ($("#someID")){
+  $("#someID").text("hi");
+}
+可是这么写是不对的！因为jQuery对象永远都有返回值，所以$("someID")总是TRUE，IF语句没有起到任何判断作用。正确的写法应该是：
+if ( $("#someID").length > 0 ) {
+$("#someID").text("hi");
+}
+注意：判断某个页面元素存在与否在jQuery实际上是没有必要的，jQuery本身会忽略对一个不存在的元素进行操作，并且不会报错。
