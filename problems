@@ -1,0 +1,9 @@
+问题：当把textarea中的值获取到并赋值到另外一个容器中时，不能得到相同样式，例如空格，回车
+解决方法：正则匹配textarea中的值；如： var com_con_text =  $(".comm_Content").val().toString().replace(/(\r)*\n/g, "<br/>");将匹配的值通过写入容器即可
+遇到的问题：$(".comm_Content").val().toString()与$(".comm_Content").val()存在区别，后者有些正则不可操作，具体原因有待探究；
+
+
+问题：在一个div中同时有img和文字时文字不能和img底部对齐
+解决方法：在img中加入vertical-align:bottom;即可
+遇到的问题：这样解决文字只会跟在img后边，如果想让一个向左一个向右浮动，及两边对齐，此方法则失效。具体解决方法有待探究；
+
