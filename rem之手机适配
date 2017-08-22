@@ -1,0 +1,27 @@
+1 meta
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+2 css
+*{margin:0;padding:0;}
+html{line-height: initial;}
+3 js（这个按照给的设计稿尺寸，一般为640px，为了方便计算，在640px的分辨率下，1rem=100px）
+(function (doc, win) {
+		var docEl = doc.documentElement,
+		resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+		recalc = function () {
+			var clientWidth = docEl.clientWidth;
+			if (!clientWidth) return;
+
+			if (clientWidth >= 640){
+				docEl.style.fontSize = '100px';
+			} else {
+				docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+			}
+		};
+
+		if (!doc.addEventListener) return;
+		win.addEventListener(resizeEvt, recalc, false);
+		doc.addEventListener('DOMContentLoaded', recalc, false);
+	})(document, window);
+  4 好了，接下来把px换算成rem就可以愉快的写页面了。。。
+	
