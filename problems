@@ -9,3 +9,27 @@
 
 问题：在项目中需要用到canvas画图完成图表绘制，遇到一个问题canvas底部总是存在一定的间距。
 解决方法：在canvas的父div增加 vertical-align: bottom样式即可解决问题。
+
+
+问题：在表格中画斜线分隔导航，尝试很多种方法都不能自适应，最后用canvas解决；
+解决代码： 
+//需要画斜线的div
+<div class="tab_tr_div">
+                    <canvas style="width: 100%;height:60px;vertical-align: bottom" id="myCanvas"></canvas>
+                </div>
+//canvas方法
+function line(){
+    var myCanvas = document.getElementById("myCanvas");
+    var width = myCanvas.width;
+    var height = myCanvas.height;
+    var ctx = myCanvas.getContext("2d");
+    ctx.strokeStyle="#ccc";
+    ctx.moveTo(0,0);
+    ctx.lineTo(width,height);
+    ctx.stroke();
+
+    ctx.font="35px Georgia";
+    ctx.fillText("城市",width/3*1.8,height/3);
+    ctx.fillText("船公司",width/9,height/5*4);
+}
+                
