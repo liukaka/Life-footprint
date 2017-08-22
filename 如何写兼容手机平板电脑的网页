@@ -1,0 +1,42 @@
+写手机页面一定要添加这段代码，去除触屏，防止页面被放大，代码如下<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+如何写兼容手机平板电脑的网页
+首先我们需要设定一下基础，这个基础是一个参考，由于用户打开网页的设备不一样，就拿手机来说吧，屏幕的尺寸就不一样，所以会出现好多种情况，而我们的代码就是适应各种情况，根据情况的不同，页面显示也大同小异。我在这里设置的基础是15px.代码如下，html{ margin:0 auto; padding:0 auto; font-size:15px;}。
+如何写兼容手机平板电脑的网页
+设置好后，我们约束一下全局变量。代码如下，大家可以根据自己的情况添加，
+*{margin:0 auto; padding:0 auto; font-family:"微软雅黑"; }
+body{margin:0 auto; padding:0 auto;overflow-x:hidden;}
+img{ border:0;}ul {margin:0; padding:0;}
+ul li{ list-style:none;}
+a{ text-decoration: none;}
+
+弄好之后，我们来看最重要的一步，就是判断用户浏览器的设备。如果用户的设备是320—360之间就显示成1rem=10px；在360—400之间就显示1rem=11.25px；在400—480，则显示1rem=12.5px等等以此类推，如果你想兼容更精确的手机屏幕，可以使用更精确的范围与屏幕。代码如下所示，
+@media only screen and (min-width: 320px){
+    html {
+        font-size:10px !important;
+    }
+}
+@media only screen and (min-width: 360px){
+    html {
+        font-size:11.25px !important;
+    }
+}
+@media only screen and (min-width: 400px){
+    html {
+        font-size:12.5px !important;
+    }
+}
+@media only screen and (min-width: 480px){
+    html {
+        font-size:15px !important;
+    }
+}
+@media only screen and (min-width: 640px){
+    html {
+        font-size:20px !important;
+    }
+}
+如何写兼容手机平板电脑的网页
+这一步弄好之后，我们在注意一下div里面的图片，代码如下<div class="top01"><img src="images/top.jpg" width="100%"/></div>记住一定要让图片的宽是100%。
+如何写兼容手机平板电脑的网页步骤阅读
+7
+由于我是在电脑上看的，屏幕的宽度大于640px；所以1rem=20px，640/20=32，所以我把图片的宽度设置成32rem;
