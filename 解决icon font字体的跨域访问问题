@@ -1,0 +1,24 @@
+解决同如：firefox和IE9对icon font字体的跨域访问问题
+
+      何为跨域访问，为什么会有跨域限制？一切还得从浏览器的同源策略说起。
+      同源策略：是浏览器最核心也是最基本的安全功能，如果缺少了同源策略，则浏览器的正常功能可能会受到影响，可以说Web是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。
+      浏览器的同源策略：限制了来自不同源的“document”或脚本，对当前“document”读取或设置某些属性。同源策略的存在，限制了“源”自A的脚本只能操作“同源”页面的DOM，“跨源”操作来源于B的页面将会被拒绝。
+      何为同源呢？“img.company.com”和"agent.company.com"算不算是同源呢？相当长的时间我都认为这两个域都是"company.com"的子域，算是同源的，这想法实际上是错的。
+      同源：同主机（域名、子域或者IP地址相同）、同端口号、同协议。
+URL                	是否同源        	原因                   
+http://agent.soufun.com/dir1/a.aspx        	 是	 
+http://agent.soufun.com/dir2/a.aspx	 是	 
+https://agent.soufun.com/secure.htm	 否	 协议不同
+http://agent.soufun.com:81/dir2/a.aspx	 否	 端口不同
+http://img.soufun.com/dir/a.jpg	 否	 子域不同
+ 
+      图标字体：现在主流浏览器（包括IE6）都支持CSS3的自定义字体(@font-face)，因此可以尝试使用font来替换图片展示网站的各种icon。这样好处因为是矢量，放大不失真，体积小，缺点也很明显，就是同一时刻字体只能是单色。
+      功能实现后，在IE上展示好好的，但到了火狐上图标字体却不显示了。通过火狐Firebug的控制台发现如下报错“已 阻止交叉源请求：同源策略不允许读取 http://img.company.com/secondhouse/image/magentnew/styles/fonts20140704/icomoon.woff?ivldoa 上的远程资源。可以将资源移动到相同的域名上或者启用 CORS 来解决这个问题。”
+             
+
+      为什么IE和火狐下显示不一样呢？查资料得知“Firefox和IE9不支持对icon font字体的跨域访问”，需要在图标字体文件所在服务器配置Header参数“Access-Control-Allow-Origin”允许当前域名才可以。而且，经过验证，必须将参数“Access-Control-Allow-Origin”配置为“*”才可以，配置为“*.当前域名”并不可以，不知道啥原因。
+      
+      具体这个配置是怎么加上来的，因为是运维同事帮忙配置的，方法不得而知，可以参考《解决firefox和IE9对icon font字体的跨域访问问题》，核心是增加“Access-Control-Allow-Origin:*”的响应输出。在找运维同事帮忙添加配置前，为了确定方案可行性，利用Fiddler拦截http响应，添加了头部，具体可以参考《fiddler设置HTTP返回头的两种方式》，再次感受了Fiddler的强大的功能。
+      
+      
+     
