@@ -1,0 +1,368 @@
+标准化网站布局
+       标准化网站布局的格式只是整个过程的一部分，你还需要保证通用的元素，如网站的标题、网站的导航控件等在每个页面里都出现在相同的位置。解决这一问题的关键在于创建一个可以重复应用到整个网站的简单而灵活的布局。有 3 个基本办法可以选择：
+
+用户控件。用户控件时标准化通用页面元素的优秀方式，但是，它们自身并不能解决页面布局的问题，因为没有办法保证用户控件在所有页面中都被放到同样的位置。
+HTML 框架。框架是在一个浏览器窗口中同时显示多个页面的 HTML 基本工具。它的主要缺点是它里面的每个页面必须通过单独请求服务器进行检索，这些页面的代码不得不完全独立。这同时意味着一个框架里的页面不能和其他框架中的页面交互，也不能影响其他框架中的页面。（至少不能通过服务器端代码）
+母版页。母版页是 ASP.NET 的一个特性，它专门设计用于标准化 Web 页面布局。它可定义固定的内容并声明 Web 页面里可插入自定义内容的部分。如果在整个网站中使用同一个母版页，就可以确保获得同样的布局。最妙的是，如果修改了母版页的定义，应用它的所有页面都会自动变化。
+ 
+
+ 
+
+母版页基础
+       要为页面模版提供一个可操作且灵活的解决方案，必须满足以下几个条件。
+
+要能够单独定义页面的某个部分并在多个页面里重用它。
+要能够创建一个定义了可编辑区域的封闭布局。重用这个模版的页面只能够在许可的区域内添加或修改内容。
+页面能够对重用的元素做一些自定义。
+可以声明性的绑定页面倒页面模版（不使用代码）或者能够在运行时动态绑定到页面。
+可以用工具（如 VS）设计一个使用页面模版的页面。
+       为了实现这一切，ASP.NET 定义了两种新的页面类型：母版页和内容页。
+
+       母版页和普通的 Web 页面一样，它可以包含任何 HTML、Web 控件甚至代码的组合。母版页还可以包含内容占位符（定义的可修改区域）。
+
+       内容页引用一个母版页并获得它的布局和内容。此外，内容页可以在任意的占位符里加入页面特定的内容。换句话说，内容页将母版页没有定义的缺失了的内容填入母版页。
+
+ 
+
+ 
+
+简单的母版页
+       母版页和一般Web窗体的区别是：
+
+母版页由 Master 指令开始，并提供和 Page 指令相同的信息。而所有 Web 窗体都由 Page 指令开始。
+只有母版页才可以使用 ContentPlaceHolder 控件，这个控件是内容页可以插入内容的部分。
+       创建一个母版页后，会得到一个只包含 2 个 ContentPlaceHolder 控件的空白页。第一个是在 <head> 区域定义的，它让内容页面能够增加页面元数据，比如搜索关键字和样式表链接。第二个也是更重要的 ContentPlaceHolder 被定义在 <body> 区域，它代表页面显示的内容。
+
+       另外，母版页不能被直接请求，要使用母版页，必须创建一个关联的内容页。
+
+ 
+
+       下面是个简单的母版页示例，它有一个静态的横幅，其后跟着一个 ContentPlaceHolder 控件，然后是一个页脚：
+
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="SiteTemplate.master.cs"
+    Inherits="Chapter16_SiteTemplate" %>
+ 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <div style="background: black; height: 87px; font-weight: bold; font-size: 20px;
+            color: white; font-family: Verdana">
+            <img align="left" src="headerleft.jpg" />
+            <img align="right" src="headerright.jpg" />
+            <br />
+            <asp:ContentPlaceHolder ID="TitleContent" runat="server">
+                My Site
+            </asp:ContentPlaceHolder>
+        </div>
+        <br />
+        <br />
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        </asp:ContentPlaceHolder>
+        <br />
+        <em>Copyright © 2008.</em>
+    </div>
+    </form>
+</body>
+</html>
+ 
+
+ 
+
+简单的内容页
+       要在其他页面里使用母版页，必须在 Page 指令里加入 MasterPageFile 特性：
+
+<%@ Page Title="" Language="C#" MasterPageFile="~/Chapter16/SiteTemplate.master" ... %>
+       只设置 MasterPageFile 特性还不足以把普通的页面转变成内容页。内容页必须定义要插入一个或多个 ContentPlaceHolder 控件的内容（并编写这些控件需要的代码）。由于母版页已经提供了外壳，因此，试图在内容页中加入 <html>、<head>、<body> 之类的元素，则会产生一个错误。
+
+       要为 ContentPlaceHolder 提供内容，要用到另一个叫 Content 的特殊控件。ContentPlaceHolder 和 Content 控件具有一对一的关系。对于母版页里的每个 ContentPlaceHolder ，内容页会提供一个对应的 Content 控件（除非不准备为那个区域提供任何内容）。ASP.net 通过匹配 ContentPlaceHolder 的 ID 和对应的 Content控件的 Content.ContentPlaceHolderID 属性将它们对应起来。
+
+<%@ Page Title="" Language="C#" MasterPageFile="~/Chapter16/SiteTemplate.master"
+    AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Chapter16_Default" %>
+ 
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    <p class="Code" style="margin: 0in 0.1in 0pt 0in">
+        <span style="font-size: 10pt; font-family: TheSansMonoConNormal">Far out in the uncharted
+            backwaters of the unfashionable end of the western spiral arm of the Galaxy lies
+            a small unregarded yellow sun.</span></p>
+</asp:Content>
+<asp:Content ContentPlaceHolderID="TitleContent" ID="Content2" runat="server">
+    Custom Title</asp:Content>
+image
+
+ 
+
+       为了更好的理解母版页是如何工作的，值得通过跟踪（在 Page 指令里加入 Trace=true）来看看内容页。借助这种方式可以了解控件的层次。你会发现 ASP.Net 首先为母版页创建控件对象，包括 ContentPlaceHolder（它充当一个容器），接着它会把内容页的控件加入 ContentPlaceHolder 。
+
+       如果需要动态配置母版页或内容页，可以响应任意一个类中的 Page.Load 事件。有时你可能会同时在母版页和内容页中使用初始化代码。这种情况下，理解每个事件发生的顺序就很重要。ASP.NET 首先创建母版页控件，然后添加内容页的子控件。然后它触发母版页的 Page.Init 事件，随后是内容页的 Page.Init 事件。对于 Page.Load 事件，也是相同的步骤。（如果有冲突，那么内容页的自定义会覆盖在母版页相同阶段所做的修改）
+
+ 
+
+ 
+
+默认内容
+       母版页定义 ContentPlaceHolder 时可以包含默认的内容（内容页没有提供相应的 Content 控件时才会使用的内容）。
+
+       内容页不能只使用母版页默认内容的一部分或只编辑这一部分。这是不可能的，因为默认内容是保存在母版页里面而不是内容页中。所有，要么完全使用，要么就全部替换它。
+
+ 
+
+ 
+
+具有表格和 CSS 布局的母版页
+       HTML 使用基于流的布局。这意味着随着内容的增加，页面会被重新组织，其他一些内容会被挤到一边。这样的布局会使得难以获得母版页预期的结果。如果你不小心，就会破坏原本完美的布局，插入到 <Content> 标签的大量信息会把页面结构弄得乱七八糟。
+
+       为了控制这些问题，大部分母版页使用 HTML 表格或者 CSS 定位来控制布局。
+
+       使用表格时，基本原则是把整个页面或页面的部分分解到行和列里。然后你就可以把 ContentPlaceHolder 加入到某个单元格里，从而保证其他内容多少会按照预期的那样对齐。
+
+       使用 CSS 定位时，基本思想是把内容放入 <div> 标签，然后使用绝对坐标控制 <div> 的位置或者让它们浮动在页面的某一边，最后你可以把 ContentPlaceHolder 放入 <div> 标签。（http://www.csszengarden.com 和http://www.bluerobot.com/web/layouts 中有很多基于 CSS 布局的优秀示例）
+
+ 
+
+       下面示例演示了如何用母版页创建包含一个页头、页尾、导航栏的传统 Web 应用程序，这些元素都通过表格进行定义：
+
+image
+
+image
+
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="TableMaster.master.cs"
+    Inherits="TableMaster" %>
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Untitled Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <table width="100%">
+            <tr>
+                <td colspan="2" style="border: thin #008000 dotted; background: #FFFFEA; padding: 10px;">
+                    My Header
+                </td>
+            </tr>
+            <tr>
+                <td style="border: thin #008000 dotted; background: #FFFFEA; padding: 10px;">
+                    <asp:TreeView ID="Treeview1" runat="server" Width="150px">
+                        <Nodes>
+                            <asp:TreeNode Text="New Node" Value="New Node"></asp:TreeNode>
+                        </Nodes>
+                    </asp:TreeView>
+                </td>
+                <td>
+                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                    </asp:ContentPlaceHolder>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border: thin #008000 dotted; background: #FFFFEA; padding: 10px;">
+                    My Footer
+                </td>
+            </tr>
+        </table>
+    </div>
+    </form>
+</body>
+</html>
+<%@ Page Language="C#" MasterPageFile="~/Chapter16/TableMaster.master" AutoEventWireup="true"
+    CodeFile="TableContentPage.aspx.cs" Inherits="TableContentPage_aspx" Title="Untitled Page" %>
+ 
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+    Your content goes in this cell.<br />
+    <asp:Button ID="cmdShow" runat="server" Text="Show" OnClick="cmdShow_Click" />
+    <asp:Button ID="cmdHide" runat="server" Text="Hide" OnClick="cmdHide_Click" />
+</asp:Content>
+public partial class TableContentPage_aspx : System.Web.UI.Page
+{    
+    protected void Page_Load(object sender, EventArgs e)
+    {
+ 
+    }
+ 
+    protected void cmdHide_Click(object sender, EventArgs e)
+    {
+        TableMaster master = (TableMaster)this.Master;
+        master.ShowNavigationControls = false;
+    }
+ 
+    protected void cmdShow_Click(object sender, EventArgs e)
+    {
+        TableMaster master = (TableMaster)this.Master;
+        master.ShowNavigationControls = true;
+    }
+}
+image
+
+image
+
+ 
+
+ 
+
+       很多专业的 Web 开发人员倾向于使用基于 CSS 的布局技术（基于 CSS 的布局允许编写便于阅读、之后也更容易修改的标记，它易于减少长期令人头痛的问题）。
+
+       在基于 CSS 的布局中使用 ContentPlaceHolder 和在基于表格的布局中使用它同样简单。只要把 ContentPlaceHolder 放入到不同的 <div> 元素里，然后样式表使用 position、left、right、top 和 bottom 等特性对每个 <div> 元素进行定位。
+
+       例如，一个常见的页面设计是把页面分为 3 栏。页面的每个边栏被设置为固定的大小，而中间的部分占有其余的全部空间：
+
+.leftPanel
+{
+    position: absolute;
+    top: 70px;
+    left: 10px;
+    width: 150px;
+    background-color:Yellow;    
+}
+ 
+.rightPanel
+{
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    width: 150px;
+    background-color:Yellow
+}
+ 
+.centerPanel
+{
+    margin-left: 151px;
+    margin-right: 151px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color:Green;
+}
+       现在可以把页面分成列，并在适当的区域加入 ContentPlaceHolder 控件：
+
+<div class="leftPanel">Menu</div>
+<div class="centerPanel">
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+</div>
+<div class="rightPanel">Advertisement</div>
+image 
+
+ 
+
+ 
+
+母版页和相对路径
+       一个经常困扰开发人员的问题是母版页如何处理相对路径的。把母版页和内容页分放到不同的目录里是大型网站推荐使用的最佳实践，但同时，关于相对路径的问题就发生了。
+
+       假设把母版页放在了一个叫做 MasterPages 的子文件夹里，并在母版页里加入了如下这条标签：
+
+<img src="banner.jpg" />
+
+       假设 \MasterPages\banner.jpg 存在，这看起来是行得通的，甚至 VS 开发环境中也会出现这张图片。但是如果在另一个子文件夹里创建了内容页，路径就会被解释成相对于那个文件夹的路径。如果文件不在那里，就会得到一个破损的链接而看不到图片。
+
+       这一问题之所以会发生，是因为 <img> 标签只是普通的 HTML，ASP.NET 不会接触到它。要解决这一问题，可以预先把 URL 写成相对于内容页的地址。不过这会带来混淆，这限制了母版页的使用范围，并且会产生在设计环境里错误显示母版页的负面效应。
+
+ 
+
+       另一个快捷的解决方案是把图片标签变为服务器端控件，这样 ASP.NET 就会自动修复这个错误：
+
+<img src="banner.jpg" runat="server" />
+
+       这个方案会起作用是因为 ASP.NET 会根据这一信息创建一个 HtmlImage 服务器控件。这个对象在母版页的 Page 对象被实例化后创建，此时，ASP.NET 把所有路径解释为相对于母版页的位置（同样，这个技术也可以修复 <a> 标签等）。
+
+ 
+
+       还可以使用根路径语法，并用“.”字符作为 URL 的开头：
+
+<img src="./MasterPagesbanner.jpg" runat="server" />
+
+       上面的这个路径毫无歧义。但遗憾的是，这种语法只对服务器控件有效。如果要对普通的 HTML 控件有效，需要在链接里包含域名的完整相对路径，这样的 HTML 代码难看且不可移植，不推荐使用。
+
+ 
+
+ 
+
+通过配置文件应用母版页
+       值得注意的是，还可以借助 web.config 文件一次对整个网站的所有页面应用母版页。你所要做的只是像下面这样加入 <pages> 特性并设置它的 masterPageFile 特性：
+
+<system.web>
+  <pages masterPageFile="SiteTemplate.master"></pages>  
+</system.web>
+       这种方式的一个问题是，它不太灵活。任何违背了规则（例如，包含根 <html> 标签或者定义了一个不对应 ContentPlaceHolder 的内容区域）的 Web 页面都会自动损坏。如果一定要使用这一功能，就不要对整个网站应用该功能，而应在内容页面这创建子文件夹，在子文件夹里面再创建 web.config 文件。
+
+ 
+
+ 
+
+高级模板页
+       你还可以借助其他技巧和技术优化母版页的工作方式，你将看到内容页与母版页如何交互、如何动态设置母版页、如何在母版页里嵌套母版页。
+
+1. 和母版页类交互
+
+       母版页要解决的一个问题是，它的模型如何认定你是希望在所有页面间精确复制一些东西（这种情况下，可以把这些内容包含在母版页里）还是在每个页面改变这些东西（这种情况下，需要加入一个 ContentPlaceHolder，并包含每个内容页的信息）。这种区分对很多页面都很见效，但是当你在母版页和内容页之间允许更多的交互的时候，就会遇到一些麻烦。
+
+       例如，你希望母版页能够提供 3 种显示模式，然后由内容页选择正确的显示模式，这会改变母版页的外观。不过，内容页不能任意修改母版页，除了这 3 个预设的变更外，其他都会被拒绝。显然，需要通过编程才能实现它们的交互（可以通过 Page.Master 属性访问母版页的当前实例）。
+
+ 
+
+       首先，母版页可以通过公有的属性或方法开放可以让内容页修改的页面内容，比如这样：
+
+public string BannerText
+{
+    get { return lblTitleContent.Text; }
+    set { lblTitleContent.Text = value; }
+}
+ 
+
+       内容页现在可以修改母版页的标题文字了（需要注意的是 Master 属性返回的是一般的 MasterPage 类，需要转型）：
+
+protected void Page_Load(object sender, EventArgs e)
+{
+    Chapter16_SiteTemplate master = Master as Chapter16_SiteTemplate;
+    master.BannerText = "Content Page #1";
+}
+ 
+
+       另一个能够访问强类型母版页的办法是在内容页加入 MasterType 指令，你只需要在指令中指定相应 .Master 文件的虚拟路径即可：
+
+<%@ MasterType VirtualPath="~/Chapter16/SiteTemplate.master" %>
+       这样你就可以使用简单一些的强类型代码来访问母版页：
+
+protected void Page_Load(object sender, EventArgs e)
+{
+    Master.BannerText = "Content Page #1.";
+}
+ 
+
+       对于所有这些示例，有一点需要注意：当从一个页面导航到另一个页面时，所有的 Web 页面对象都会重新创建。也就是说，即使你跳转到另一个使用相同母版页的内容页，ASP.NET 也会创建一个不同的母版页对象实例。因此，用户每跳转到一个新的页面时，标题里的 Label 控件的 Text 属性会恢复它的默认值，要改变这一行为，必须在其他位置（如 cookie）保存信息并在母版页检查这些值的初始化代码！
+
+ 
+
+       你还可以强行访问母版页上的某个控件。使用的技巧是根据对象的唯一名称：
+
+Label lbl = Master.FindControl("lblTitleContent") as Label;
+if (lbl != null)
+{
+    lbl.Text = "Content Page #1.";
+}
+       当然，这种交互方式打破了基于设计和封装的原则。如果确实需要访问母版页的控件，最好在母版页里添加属性或方法来开放需要开放的内容。
+
+ 
+
+ 
+
+2. 动态设置母版页
+
+       有时候，你可能希望动态改变母版页。这可能在以下两种情形下发生：
+
+存在几种类型的用户，而你希望根据不同用户调整版面设计的复杂性或功能的可见性。（例如根据用户的带宽、可访问性、喜好…）
+在和其他公司合作时，你希望网站能够相应地调整自身的外观和布局。
+       通过编程，只需设置 Master 属性即可，不过需要记住的是，这一过程必须在 Page.Init 事件阶段完成！这一技术的实现，和本章先前介绍的动态主题非常相似。但有一个潜在的危险：内容页可能不能和任意的母版页兼容。如果内容页包含母版页里没有对应的 ContentPlaceHolder 的 Content 标签，就会产生错误（要避免这一问题，必须保证所有动态设置的母版页包含相同的占位符）。
+
+ 
+
+ 
+
+3. 嵌套母版页
+
+       例如，某网站可能有多个不同位置的导航，但它们拥有共同的标题。母版页的嵌套其实并不多见，这里就不详细叙述了。不过需要知道的是，可以使用任意级的嵌套母版页，但实现时要小心一点。虽然它听起来是模块化的好办法，但是它带给你的束缚比你想象的要多。
