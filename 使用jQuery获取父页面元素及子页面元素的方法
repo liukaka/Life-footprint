@@ -1,0 +1,19 @@
+子页面元素是include进来的,在子页面元素需要获取父页面的元素做一些操作.. 
+
+jquery提供了一个很好的方法 
+
+$("#父页面元素id" , parent.document)  
+同样适用于iframe 
+
+
+
+子页面元素是include进来的,在父页面元素需要获取子页面的元素做一些操作.. 
+
+方法： 
+
+$('#子页面元素').contents().find('#需要找的子页面元素').addClass('on'); 
+
+注：#子页面元素需包含#需要找的子页面元素 
+
+同级frame间互相操作 
+$(self.parent.frames["frame2"].document).find('xx'); 
