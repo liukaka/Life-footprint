@@ -33,3 +33,6 @@ function line(){
     ctx.fillText("船公司",width/9,height/5*4);
 }
                 
+
+问题：在代码中是<div></div><div></div>并列的形式.而在页面源代码中却成了<div><div></div></div>嵌套的形式，而在代码中不能找到相对应的嵌套方式；
+解决方法：在想要分离的第一个div外再嵌套一层div,即<div><div></div></div><div></div>；具体问题所在有待研究
