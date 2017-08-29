@@ -10,13 +10,15 @@
 </head>
 <body>
 <div id="tbl_exception" style="width:500px;height: 500px;background: red;">
-
+<div id="a"><img src="##" style="width: 100px ;height: 100px;"></div>
 </div>
 <script>
     html2canvas($("#tbl_exception"), {
         onrendered: function (canvas) {
             var url = canvas.toDataURL();
             console.log(url)
+            //以下为显示为图片功能
+              $("#a").children("img").attr("src",url);
             //以下代码为下载此图片功能
             var triggerDownload = $("<a>").attr("href", url).attr("download", "异常信息.png").appendTo("body");
             triggerDownload[0].click();
