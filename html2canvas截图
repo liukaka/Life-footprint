@@ -1,0 +1,57 @@
+
+//实现截图并下载
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/jquery-1.10.1.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+</head>
+<body>
+<div id="tbl_exception" style="width:500px;height: 500px;background: red;">
+
+</div>
+<script>
+    html2canvas($("#tbl_exception"), {
+        onrendered: function (canvas) {
+            var url = canvas.toDataURL();
+            console.log(url)
+            //以下代码为下载此图片功能
+            var triggerDownload = $("<a>").attr("href", url).attr("download", "异常信息.png").appendTo("body");
+            triggerDownload[0].click();
+            triggerDownload.remove();
+        }
+    });
+
+</script>
+</body>
+</html>
+//实现截图
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>html2canvas example</title>
+    <script src="../js/jquery-1.10.1.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+</head>
+<script type="text/javascript">
+    function takeScreenshot() {
+        console.log('test');
+        html2canvas(document.getElementById('view'), {
+            onrendered: function(canvas) {
+                document.body.appendChild(canvas);
+            },
+        });
+    }
+</script>
+<body>
+<div id="view" style="background:red; width: 700px; height: 500px;">
+    <input type="button" value="截图" onclick="takeScreenshot()">
+</div>
+</body>
+
+</html>
