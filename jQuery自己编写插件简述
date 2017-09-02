@@ -1,0 +1,220 @@
+1：jquery插件开发分为类级别开发和对象级别开发，因为类级别开发在真实项目中几乎不用，下面只对象级别进行探究。
+
+ 
+
+a ， 首先准备好一个架子，如下：
+
+;$(function($){
+
+})(jQuery);
+b， 这个架子是你编写插件代码要写入的空间，下面简单解释一下这个架子：
+
+1）在jQuery环境下封装自己的插件，首先为避免与其他库的冲突，需要在插件的后面传一个jQuery参数进去，对应的函数里面的参数写入$
+
+2）未避免出现问题，需在插件的前后加入分号（分号的增加并不会影响程序的运行）
+
+ 
+
+2：再上一个架子
+
+ 
+
+复制代码
+;(function($){
+    $.fn.tab = function(options){
+        
+        var defaults = {
+            //各种参数，各种属性
+        }
+
+
+        var options = $.extend(defaults,options);
+
+        this.each(function(){
+            
+            //各种功能
+        });
+
+        return this;
+    }
+
+
+
+})(jQuery);
+复制代码
+这个架子是个什么东西呢？原来他是jQuery官方提供的一个标准化的开发模式，这里简单地介绍一下，不作详要说明，细节有兴趣的童鞋可以自己百度一下。
+
+$.fn.tab  这个tab是你这个功能插件的名字，可任意改变名字，你自己知道就好了。
+
+ 
+
+var options = $.extend(defaults,options);  这个是利用extend方法把 defaults对象的方法属性全部整合到 options里，
+
+也就是options继承了defaults对象的方法以及属性。这个defaults和options名字是可以随意更改的，只要是满足js的命名规范。
+
+ 
+
+this.each(function(){});就不介绍了，下面会通过一个实例表现它，这里你只需要知道他是实现功能代码的地方就可以啦~
+
+至于return this; 就留到实例结束后面再说，这样做肯定是有原因的啦，别心急~
+
+ 
+
+3：心细的girls or boys 肯定知道这个实例是什么啦，没错，是tab选项卡~
+
+下面以tab选项卡的方式来explore这个插件的编写。
+
+ 
+
+a: 先备好html,
+
+复制代码
+<div class="tab">
+　　<ul class="tab_nav">
+　　　　<li class="current">html</li>
+　　　　<li>css</li>
+　　　　<li>js</li>
+　　</ul>
+
+　　<div class="tab_content">
+　　　　<div style="display:block;">html</div>
+　　　　<div>css</div>
+　　　　<div>js</div>
+　　</div>
+</div>
+
+复制代码
+b，页面是这样的：
+
+ 
+
+c，ok，页面已经准备就绪，现在可以来写插件了,先上代码
+
+复制代码
+;(function($){
+    $.fn.tab = function(options){
+        
+        var defaults = {
+            //各种参数，各种属性
+        }
+
+
+        var options = $.extend(defaults,options);
+
+        this.each(function(){
+            
+            //各种功能  //可以理解成功能代码
+            var _this = $(this);
+            _this.find('.tab_nav>li').click(function(){
+                $(this).addClass('current').siblings().removeClass('current');
+
+                var index = $(this).index();
+                _this.find('.tab_content>div').eq(index).show().siblings().hide();
+
+            });
+
+
+        });
+
+        return this;
+    }
+
+
+
+})(jQuery);
+复制代码
+ 
+
+d，这个时候只需要看this.each下的功能代码，学过jQuery的同学都知道代码实现，这里主要就调用插件和配置参数这一块来进行探究。
+
+ 
+
+4，在html代码里我们只需要：
+
+<script>
+        $(function(){
+            $('.tab').tab();
+        });
+</script>
+a，找到外部容器，并调用你所写的tab方法（就是你所写的插件名字）：
+
+$.fn.tab = function(options){}
+ 
+
+b,敏感的童鞋肯定发现了功能代码里面的class元素以及事件是被写死的，要是我们在另外一个页面写的class和事件需求和这个插件的不同，
+
+除了改插件源码之外这个插件就没法用用了，作为可扩展性的插件我们怎么可以把它写死呢？嗯哼？当然不可以啦~
+
+ 
+
+好，就让我们一起来解决它吧：
+
+1）请看下图：
+略
+
+
+ 
+
+2) 没错，就在这里配置它，我们可以看到哪些东西被写死了呢？下图：
+略
+
+
+3） 现在我们可以在default对象里面绘画你的小空间啦~见下图：
+
+略
+
+ （大致意思即为将写死的东西以键值对形式写到 var defaults = {
+            //各种参数，各种属性
+        }）中
+        
+        
+        例如： var defaults = {
+            Tabnav:".tab_content>div"
+        }
+
+3）有的同学可能会疑惑为什么用options调用呢？其实上面已经说过啦，因为extends将default对象的属性以及方法都整合到了options里。
+
+这时候只需要用options调用就可以了。
+
+4）同样的如果需求是把click事件改为mouseover事件,此时我们需要用到on() or bind() ,这样就方便我们改事件参数啦，如下：
+
+_this.find(options.tabNav).on('click',function(){}
+此时只要在default里写入相应的代码
+
+eventType:'click'
+而后同样的变化
+
+_this.find(options.tabNav).on(options.eventType,function(){}
+5）此时因为需求是mouseover，这是就不需要改插件源码啦，直接在html里的js代码（or你自己的js总文件里）进行相应的变化就ok啦，如下：
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+<script>
+        $(function(){
+            $('.tab').tab({
+                currentClass:'current123',
+                eventType:'mouseover'
+                                .....
+            });
+        });
+</script>
+*此时在这里更改class和事件就很方便啦，温馨提示，class改变虽好，可别忘了改对应的css样式名字哦，要成双成配呢~
+
+ 
+
+好了，到这里基本上就要结束啦，哦，对了，return this;还没说呢,宝宝是不会忘记的~
+
+5：jQuery最强大的特性之一莫过于链式操作啦，此时如果你在$('.tab').tab()后面追加操作，你会发现无法实现，如下:
+
+$('.tab').tab().find('.tab_nav>li').css('background','red');
+但是当你return this把对象返回出去的时候你会发现又重新实现了~
+
+
+转自--http://blog.csdn.net/chenxi1025/article/details/52222327
