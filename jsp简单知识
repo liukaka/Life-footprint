@@ -1,0 +1,74 @@
+转载 原文地址：http://blog.csdn.net/qq_15096707/article/details/71347239
+
+1 介绍
+JSP全称是Java Server Pages，它和Servlet技术一样，都是SUN公司定义的一种用于开发动态Web页面（资源）的技术。 
+JSP技术允许在页面中编写Java代码，并且允许开发人员在页面中获取request、response等Web开发常用对象，实现与浏览器的交互，所以JSP也是一种动态Web资源的开发技术。
+
+2 jsp指令
+（a） page指令
+JSP中Page指令的errorPage属性用于设置JSP页面出错时显示的页面内容，errorPage属性的设置值必须使用相对路径，如果以“/”开头，表示相对于当前Web应用程序的根目录（注意不是站点根目录）。可以在web.xml文件中使用<error-page>元素为整个Web应用程序设置错误处理页面，其中的<exception-type>子元素指定异常的完全限定名
+，<location>元素指定以“/”开头的错误处理页面的路径。如：
+<error-page>
+    <exception-type>java.lang.ArithmeticException</exception-type>
+    <location>/errors/error.jsp</location>
+</error-page>
+如果设置了某个页面的Page指令的errorPage属性，那么在web.xml文件中设置的错误处理将不对该页面起作用。 
+服务器抛404时显示的页面设置：（在web.xml中设置）
+
+<error-page>
+    <error-code>404</error-code>
+    <location>/errors/404.jsp</location>
+</error-page>
+（b）include指令
+在一个jsp页面中，可以通过include指令引入另一个jsp页面。
+include指令为静态包含（编译时包含），它包含的所有JSP页面都只会同原来的JSP页面编译成一个servlet。语法：<%@ include file="relativeURL"%>
+其中的file属性用于指定被引入文件的路径。路径以“/”开头，表示代表当前Web应用。 
+被引入的文件可以使用任意的扩展名，即使其扩展名是html，JSP引擎也会按照处理JSP页面的方式处理它里面的内容，为了见名知意，JSP规范建议使用.jspf（JSP fragments）作为静态引入文件的扩展名。 被引入的JSP页面的指令不能冲突（除了pageEncoding和导包除外）。 
+　　示例： 
+>>>>>> index.jsp <<<<<<<
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/public/header.jsp"%>
+<h4>页面主体内容...</h4>
+<%
+    // 注释
+    out.write("测试中文输出");
+%>
+<%@ include file="/public/footer.jsp"%>
+
+被包含页面：header.jsp、footer.jsp（这里以.jspf后缀更好） 
+
+>>>>>> header.jsp <<<<<<
+<%@ page import="java.util.Date" contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Header</title>
+</head>
+<body>
+<p><%=new Date().toLocaleString()%></p>
+
+>>>>>> footer.jsp <<<<<<<
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<p>这是页脚</p>
+</body>
+</html>
+
+动态包含（运行时包含）：包含过程中，所涉及到的所有JSP页面都将对应单独编译成一个servlet。 
+示例： 
+
+>>>>>>> index.jsp <<<<<<<
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    request.getRequestDispatcher("/public/header.jsp").include(request, response);
+%>
+<h4>页面主体内容...</h4>
+<%
+    // 注释
+    response.getWriter().write("测试中文输出");
+%>
+<%
+    request.getRequestDispatcher("/public/footer.jsp").include(request, response);
+%>
+
+此外，静态包含比动态包含的效率要好。
+
+.........未完待续
