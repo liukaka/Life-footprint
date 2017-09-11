@@ -1,0 +1,232 @@
+jQuery效果
+隐藏、显示、切换、滑动、淡入淡出、以及动画
+
+1、隐藏与显示(改变：display：none;)
+hide()——隐藏
+show()——显示
+
+toggle()方法：可以使用它来切换hide()与show()方法
+eg1：显示
+<style type="text/css">
+*{margin:0;padding:0;}
+.body{font-size:12px;font-family:"微软雅黑";color:#666;}
+.yym{width:100px;height:100px;background:red;text-align:center;line-height:100px;border-radius:50px;color:#fff;display:none;}
+</style>
+</head>
+<body>
+<div class="yym">世界那么大</div>
+<input type="button" value="点击显示HTML元素" id="show_btn" />
+<input type="button" value="点击显示HTML元素并执行回调函数" id="show_btn1" />
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//点击按钮让class=yym的文本显示出来
+$("#show_btn").click(function(){
+//slow默认值==600毫秒，1秒=1000毫秒;fast==200毫秒
+$(".yym").show("slow");
+});
+//用1000毫秒把.yym显示出来，并且将文本替换成新的内容
+$("#show_btn1").click(function(){
+$(".yym").show(1000,function(){
+$(this).text("我想去看看");
+});
+});
+});
+</script>
+eg2：隐藏
+<body>
+<p>黄河是中国的第二大河流</p>
+<input type="button" value="点击隐藏文本" id="yym_hide"/>
+<input type="button" value="点击缓慢隐藏文本" id="yym_hide1" />
+<input type="button" value="缓慢隐藏文本并回调函数" id="yym_hide2" />
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//点击按钮隐藏P标签
+$("#yym_hide").click(function(){
+$("p").hide();
+});
+//点击按钮缓慢隐藏P标签
+$("#yym_hide1").click(function(){
+$("p").hide(2000);
+});
+//点击元素
+$("#yym_hide2").click(function(){
+//隐藏p标签，function（回调函数）
+$("p").hide(1000,function(){
+$("body").text("黄河之母亲河");//文本隐藏后，若要让文本改变，则用body
+});
+});
+});
+</script>
+
+eg3：toggle()——点击按钮隐藏，再点击又显示
+<style type="text/css">
+*{margin:0;padding:0;}
+.yym{width:300px;height:300px;background:green;}
+</style>
+</head>
+<body>
+<div class="yym"></div>
+<input type="button" value="toggle函数" id="yym_toggle" />
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//点击按钮隐藏，再点击又显示
+$("#yym_toggle").click(function(){
+});
+});
+</script>
+
+eg3.1:
+<style type="text/css">
+*{margin:0;padding:0;}
+.yym{width:300px;height:300px;background:green;}
+</style>
+</head>
+<body>
+<div class="yym"></div>
+<input type="button" value="toggle函数" id="yym_toggle" />
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//点击按钮隐藏，再点击又显示
+$("#yym_toggle").click(function(){
+$(".yym").toggle(2000,function(){
+$("body").html("<img src='http://p1.qhimg.com/dmt/528_351_/t012ffcdd03db3d42f6.jpg' alt='美女' width='500' height='300'>")
+});
+});
+});
+</script>
+
+2、淡入淡出(改变：宽度、高度、透明度<opacity>)
+通过jQuery，可以实现元素的淡入淡出效果(改变opacity透明度)
+jQuery拥有以下四种方法：
+fadeIn()用于淡入已隐藏的元素
+fadeOut()方法用于淡出可见元素
+fadeToggle()该方法可以在fadeInt()与fadeOut()方法之间进行切换
+如果元素已淡出，则fadeToggle()会向元素添加淡入效果
+如果元素已淡入，则fadeToggle()会向元素添加淡出效果
+
+jQuery fadeTo()方法
+jQuery fadeTo()方法允许渐变为给定的不透明（值介于0与1之间）
+eg:fadeIn()淡入元素  fadeOut淡出元素 fadeToggle()切换  fadeTo透明度
+<style type="text/css">
+*{margin:0;padding:0;}
+.yym{width:300px;height:300px;background:red;display:none;}
+</style>
+</head>
+<body>
+<input type="button" value="我是一个fadeIn方法" id="yym_fadeIn">
+<input type="button" value="我是一个fadeOut方法" id="yym_fadeOut">
+<input type="button" value="fadeToggle方法" id="yym_fadeToggle" />
+<input type="button" value="fadeTo透明度" id="yym_fadeTo" />
+<div class="yym"></div>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//fadeIn淡入
+$("#yym_fadeIn").click(function(){
+$(".yym").fadeIn(2000);
+});
+//fadeOut淡出
+$("#yym_fadeOut").click(function(){
+$(".yym").fadeOut(2000);
+});
+//fadeToggle 隐藏与显示的切换
+$("#yym_fadeToggle").click(function(){
+$(".yym").fadeToggle();
+});
+//fadeTo渐变为给定的不透明度（值介于0到1之间）
+$("#yym_fadeTo").click(function(){
+$(".yym").fadeTo(2000,0.5,function(){//表示2秒钟变成半透明度，所有例子中function都是可加可不加，加是另外改变什么
+alert("太帅了");
+});
+});
+});
+</script>
+</body>
+
+3、滑动(改变：高度)
+jQuery滑动方法可使元素上下滑动（主要是改变高度）
+通过jQuery，可以在元素上创建滑动效果
+jQuery有以下滑动方法：
+slideDown()用于向下滑动元素
+slideUp()用于向上滑动元素
+slideToggle()方法可以在slideDown()和slideUp方法之间进行切换
+如果元素向下滑动，则slideToggle()可向上滑动
+如果元素向上滑动，则slideToggle()可向下滑动
+eg：
+<style type="text/css">
+*{margin:0;padding:0;}
+.yym{width:300px;height:300px;background:red;display:none}
+</style>
+</head>
+<body>
+<input type="button" value="向下滑动" id="yym_slideDown" />
+<input type="button" value="向上滑动" id="yym_slideUp" />
+<input type="button" value="上下滑动切换" id="yym_slideToggle" />
+<div class="yym"></div>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//slideDown向下滑动
+$("#yym_slideDown").click(function(){
+$(".yym").slideDown(2000);
+});
+//slideUp向上滑动
+$("#yym_slideUp").click(function(){
+$(".yym").slideUp(4000);
+});
+//slideToggle上下滑动切换
+$("#yym_slideToggle").click(function(){
+$(".yym").slideToggle(2000);
+});
+});
+</script>
+
+4、 1）动画
+jQuery animate()方法允许创建自定义的动画
+jQuery动画——animate()方法
+
+jQuery animate()方法用于创建自定义动画
+
+2）停止动画
+jQuery stop()方法用于在动画或效果完成前对他们进行停止
+
+jQuery stop()方法
+jQuery stop()方法用于停止动画或效果，在他们完成之前
+stop()方法适用于所有jQuery效果函数，淡入淡出和自定义动画
+
+eg：
+<style type="text/css">
+*{margin:0;padding:0;}
+.yym{width:300px;height:300px;background:red;position:absolute;left:0;top:30px;}
+</style>
+</head>
+<body>
+<input type="button" value="点击我放大" id="yym_animate" />
+<input type="button" value="点击我停止" id="yym_stop" />
+<div class="yym"></div>
+<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript">
+$(function(){
+//使原背景图片动起来
+$("#yym_animate").click(function(){
+$(".yym").animate({
+width:"500px",
+height:"500px",
+//移动时必须要position定位
+left:"200px",//向右移动
+top:"200px"//向下移动
+},2000,function(){//不写时间也可以的
+alert(0);
+});
+});
+//使原本动起来的背景图片停下来
+$("#yym_stop").click(function(){
+$(".yym").stop();
+});
+});
+</script>
+</body>
