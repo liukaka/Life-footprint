@@ -1,0 +1,410 @@
+为页面添加DOCTYPE 
+
+由于不同浏览器对标签,样式表的解释不尽相同,所以需要为html文件定义一个标准的文档类型,使不同浏览器尽量按照一个统一的html标准来解析渲染页面。 
+!DOCTYPE 声明指定文档遵从的 DTD，如： 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+标准HTML标签的正确使用 
+
+尽量使用div+css布局,不用table做布局。 
+
+使用table做布局容易造成代码冗余，相对<div></div>编写来说，代码繁多。并且，table需要将元素都下载后进行显示，相应的网页打开速度也较慢。 
+应该使用标准化的页面结构：DIV+CSS。这种布局方式代码简洁，页面浏览速度较快，页面布局灵活，改版时只需改CSS样式即可实现页面重新布局，而不用改动程序，从而降低了网站改版的成本。 
+注意标签的闭合关系,尤其是在form标签中嵌套div等其他标签时。 
+
+有的时候页面上会出现多余的空白，即使重新设置了margin也无法避免，这个时候有可能是页面元素标签闭合出现了不配对的情况，如： 
+<div class=”outer”> 
+     <form name=”testForm”> 
+         <div class=”inner”> 
+              <input name=”title” type=”text” /> 
+         </form> 
+     </div> 
+</div> 
+定义table时使用tbody元素，以保证包括IE在内的所有浏览器可正确使用 
+
+即使table没有显示定义tbody元素,浏览器也会认为tr节点的父节点是一个自动添加的默认tbody节点.为了避免使用javascript操纵tr节点时可能产生的误会,  还是手动添加一个比较好，如： 
+<table id=”myTable”> 
+<tbody id=”myTableBody”> 
+  <tr> 
+       <td> 
+</td> 
+</tr> 
+</tbody> 
+</table> 
+注意标签及属性的大小写 
+
+有的时候，有些绑定在元素上的事件在IE浏览器下响应，在safari或其他浏览器下却不响应。这时候需要检查事件绑定方式的正确性，高级事件的绑定需要区别IE和其他浏览器写两套javascript，而简单事件模型需要注意一下绑定事件名的大小写。如： 
+<input type=”text” name=”keywordSearch” onFocus=”clearValue()” > 
+这里应该用小写的onfocus，并且显示的添加标签闭合符号才是规范的写法。 
+<input type=”text” name=”keywordSearch” onfocus=”clearValue()” /> 
+
+注意标签的属性值设置 
+
+<script>标签的language和type属性 
+
+<script>标签的language属性是用来定义脚本语言版本的，正确的赋值应该形如<script>用来告诉浏览器（主要是IE）使用1.2版本的javascript语法来解释；而type属性才是用来定义脚本类型的，是w3c的标准属性，并且使用小写属性才是符合标准的做法。如果不是特别情况下需要告诉浏览器按照较低版本的javascrip语言进行解释的话（目前大多数浏览器支持的javascript版本是1.5），一般不需要定义language属性，但是type属性是需要定义的。所以应该把代码中的 
+<SCRIPT Language="JavaScript">改为<script> 
+<a>标签的alt和title属性 
+
+虽然alt和title这两个属性的值在IE下都会以tool tip的方式在鼠标悬停时显示，但是二者还是有区别的。alt是图片没有显示出来的时候的替代显示，而title才是鼠标放到上面时的提示。 
+<input>标签的checked、readonly属性 
+
+在早期版本的HTML中，并没有强制规定所有的属性都应该赋值，在表示一个选中的复选框时，<input checked > 这样的写法是被认可的。但是根据XHTML的标准，这样的文法并不是一个严格的XML格式，应该注意对属性的赋值和标签的闭合，以顺应HTML标准发展的趋势，写成这样： 
+<input checked="checked" /> 
+<input readonly="readonly" /> 
+<option>标签的select ed属性 
+
+与上一条相同的理由，<select>选项中<option>标签的selected属性也应该赋值： 
+< option selected="selected" /> 
+<img>标签的 align="absmiddle" 属性 
+
+根据XHTML的标准，HTML标签应该专注于内容的表示，而不是样式的控制，样式应该交给CSS调整。所以废弃了一些旧的标签和属性，比如<em>标签和<i>标签都会让标签内容中文字以斜体显示，但是<i>标签这种单纯以样式命名的标签已经属于废弃的标准了，取而代之的是表示emphasis（强调）含义的<em>标签。同理，<img>标签的和align="absmiddle" 属性表示该图片和相邻文字垂直居中对齐，这也是表示样式的属性，应该使用CSS而不是这个属性来控制图片的对齐样式，避免两处样式控制的相互影响。 
+<iframe>标签的frameborder属性 
+
+在使用iframe时，IE中或许只要设置border=“0”就可以不显示iframe的边框了，但是标准的控制frame窗口边框的属性是frameborder，应该设置frameborder=“0”才能在IE之外的其他浏览器中同样隐藏frame的边框： 
+<iframe frameborder="0" /> 
+
+<table>标签的cellpadding属性 
+
+这个属性同<img>标签的 align属性一样，也是一个僭越了HTML自身表示内容的职责而控制样式的一个属性，它规定的是单元之间的空间。从实用角度出发，最好不要规定 cellpadding，而是使用 CSS 来控制单元格的内边距。 
+<td>标签的nowrap属性 
+
+nowrap是表示内容不自动换行的属性，但是同上面的属性一样，这是一个控制样式的属性。在 HTML 4.01 中，<td>标签的 "bgcolor"、"height"、"width" 以及 "nowrap" 是不被赞成使用的。在 XHTML 1.0 Strict DTD 中，<td>标签的 "bgcolor"、"height"、"width" 以及 "nowrap" 是不被支持的。 
+
+二： 
+css hack的使用 
+
+CSS类级别的hack 
+
+仅IE7识别 *+html {…} 
+IE6及IE6以下识别 * html {…}  
+opera、safari、chrome识别： 
+@media all and (min-width: 0px){…}  //Firefox3.0.6不识别，但Firefox3.6也识别该规则，如果Firefox版本有严格要求，请使用下一条规则 
+@media screen and (-webkit-min-device-pixel-ratio:0){…}  //IE、Firefox不识别该规则 
+仅opera识别： 
+@media screen and (-webkit-min-device-pixel-ratio:10000)，not all and (-webkit-min-device-pixel-ratio:0{…}  
+CSS属性级别的hack 
+
+仅IE识别 ： margin-left:10px\9; 
+仅IE8识别  ：  margin-left:10px\0; 
+IE6/IE7识别  ：  *margin-left:10px; 
+仅IE6识别 :   _margin-left:10px; 
+CSS Hack综合示例： 
+/**add 'margin-top: -10px;' for IE7/Firefox/Opera/Safari/Chrome , 'margin-top: 5px;' for IE8  **/ 
+.news_list01 h2 span{float: right; margin-top: 5px; *margin-top: -10px; display: inline} 
+@media all and (min-width: 0px){ 
+     .news_list01 h2 span{float: right; height: 19px; margin: 0 0 0 0; padding-top: 16px; padding-bottom: 0; display: inline} 
+} 
+HTML代码片断级别的hack（仅IE识别） 
+
+① <!--[if !IE]> 除IE外都可识别的代码片断<![endif]--> 
+② <!--[if IE]> 所有的IE可识别的代码片断 <![endif]--> 
+③ <!--[if IE 7]> 仅IE7可识别的代码片断 <![endif]--> 
+④ <!--[if lt IE 7]> IE7以及IE7以下版本可识别的代码片断<![endif]--> 
+⑤ <!--[if gte IE 7]> IE7以及IE7以上版本可识别的代码片断 <![endif]--> 
+用脚本设置CSS属性 
+
+设置元素的style样式 
+
+Var spanElement = document.getElementById(“mySpan”); 
+//下面写法保证出IE外，所有浏览器可用 
+spanElement.setAttribute(“style”,”font-weight:bold;color:red;”); 
+//下面的写法保证IE可用 
+spanElement.style.cssText=”font-weight:bold;color:red;”; 
+设置元素的class属性 
+
+Var element = document.getElementById(“myElement”); 
+//下面的写法保证除IE外，所有浏览器可用 
+Element.setAttribute(“class”,”styleClass”); 
+//下面写法保证IE可用 
+Element.setAttribute(“className”,”styleClass”); 
+具体CSS效果的实现 
+
+按钮悬停时鼠标呈现手的形状 
+
+cursor:hand和cursor:pointer效果是一样的，当鼠标移动至该元素时呈现手的形状。但是应该尽量使用cursor:pointer而非cursor:hand，因为cursor:hand只有IE识别，而cursor:pointer才是CSS2.0的标准属性，IE之外的浏览器也支持。 
+窗口滚动条显示问题 
+
+在使用弹出窗口或者框窗口架的时候，有时会有多余的滚动条出现，这时需要从多个方面进行确认： 
+弹出窗口时window.open方法参数中设置的窗样式是否定义了scroll=yes 
+框架标签的属性中是否设置了scrolling=“yes” 
+窗口或框架内页面的CSS中，是否对html或body的overflow进行了样式定义，如果没有请参考如下代码。 
+html { 
+     margin: 0; 
+     padding: 0; 
+     overflow-x:hidden; 
+     overflow-y:hidden; 
+} 
+line-height 属性 
+
+line-height行高指的是文本行的基线间的距离，即字体最底端与字体内部顶端之间的距离。如下图所示： 
+文本之间的空白距离（行距）不仅仅是行高决定的，同时也受字号的影响。有时侯同一行内的不同元素底边没有对齐，有可能就是行高不统一造成的，这时关调整高度和对齐方式是不够的，还需要调整line-height属性。 
+display:inline-block 
+
+display 属性有三个值：block，inline，inline-block。其中display:block就是将元素显示为块级元素；display:inline就是将元素显示为行内元素；display:inline-block将对象呈递为内联对象，但是对象的内容作为块对象呈递。旁边的内联对象会被呈递在同一行内。 
+l        block元素的特点是：总是在新行上开始；高度，行高以及顶和底边距都可控制；宽度缺省是它的容器的100%，除非设定一个宽度。<div>, <p>, <h1>, <form>, <ul> 和 <li>是块元素的例子， display属性默认值为block。 
+l        inline元素的特点是： 和其他元素都在一行上；高，行高及顶和底边距不可改变；宽度就是它的文字或图片的宽度，不可改变。<span>, <a>, <label>, <input>, <img>, <strong> 和<em>是inline元素的例子， display属性默认值为inline。 
+l        inline-block的元素特点：呈现为内联对象，四周元素保持在同一行，但可以设置宽度和高度地块元素的属性，目前IE8、Firefox3、Opera、Safari都可以支持该属性了。 
+div中的文字自动换行问题 
+
+目前控制换行是使用以下CSS： 
+div．content { 
+     word-wrap:break-word; 
+     overflow:hidden; 
+} 
+在 IE 、Firefox、Safari、Chrome下没有任何问题，但是在 Opera下，长串英文会被遮住超出的内容。如果想要让长串英文字符也自动换行，还需要设置word-break:break-all; （但是，此方式会导致普通的英文语句中的单词会被断开，ie下也是）。英文单词在排版规则上不应该被断开，长串英文字符其实就是一个比较长的单词，自然也不需要断开换行显示了，所以一般不需要额外设置word-break:break-all; 。 
+textarea中的文字自动换行问题 
+
+在textarea中设置输入内容的自动换行，也是在CSS中设置word-wrap:break-word;属性。需要额外注意的是textarea元素本身有一个warp属性，其取值含义如下： 
+l        off：不自动换行； 
+l        hard：自动硬回车换行，换行标记一同被传送到服务器端（Opera、Chrome下不传）； 
+l        soft：自动软回车换行，换行标记不会传送到服务器端。 
+
+三： 
+
+DHTML 
+
+DHTML是个好东西，大大方面了前端的交互实现，使得获取页面元素以及动态修改页面元素变的简单无比。但是所有的浏览器都认识这些语法吗？ 
+document.all 
+
+document.all不是所有浏览器都能识别，要写出更通用的代码，最好还是通过id来得到，使用document.getElementById(…) 
+element.outerText, element.innerText, element.outerHTML， element.innerHTML 
+
+element.outerText, element.innerText, element.outerHTML是属于IE特有的, 而element.innerHTML是通用的。如果要在其他浏览器下使用不通用的属性，可以参考以下代码实现： 
+if(!isIE()){ 
+     HTMLElement.prototype.__defineGetter__("innerText", 
+     function(){ 
+         var anyString = ""; 
+         var childS = this.childNodes; 
+         for(var i=0; i<childS.length; i++){ 
+             
+              if(childS[i].nodeType==1) 
+                   anyString += childS[i].innerText; 
+              else if(childS[i].nodeType==3) 
+                   anyString += ahildS[i].nodeValue; 
+         } 
+         return anyString; 
+     } 
+     ); 
+     HTMLElement.prototype.__defineSetter__("innerText", 
+     function(sText){ 
+         this.textContent=sText; 
+      
+     } 
+     ); 
+} 
+document.forms.actionForm.inputName.value 
+
+之前用document.all.title.value来获取名为actionForm的标单中名为title的input域值得地方，应该改为document.forms.actionForm.input.value，要这么使用，首先要保证HTML中form标签与其他标签结构上有完整的闭合关系。 
+Table操作 
+
+moveRow ( iSource , iTarget )方法 
+
+oRow = tableObject.moveRow ( iSource , iTarget )，这个方法可以很方便实现table中tr的动态顺序调整。但是这个方法是IE内核自己实现的，不是DOM标准方法，所以别的浏览器没有。在使用到了这些IE独有的方法的地方，要么换用标准的DOM节点操纵方式——insertBefore(currobj, beforeObj.nextSibling)，要么先在HTMLDocument类的prototype上自己实现一个 moveRow方法： 
+function getTRArray(){ 
+     …… 
+     //将需要操纵的tr都放入数组作为该方法的返回值 
+} 
+    
+function getTRByIndex(sourceELIndex){ 
+     var trArray = getTRArray(); 
+     var result = trArray[sourceELIndex]; 
+     return result; 
+}       
+    
+if( !isIE && HTMLElement.moveRow == null ) 
+{ 
+     //入参说明： 
+     //sourceELIndex ：需要移动的tr在tbody中的第几行（>=1） 
+     //targetELIndex ：需要移动到tbody中的第几行（>=1，<=行数） 
+     HTMLElement.prototype.moveRow = function(sourceELIndex,targetELIndex) 
+     {       
+         var tbObject = document.getElementById("tbodyEL"); 
+         var resultEL; 
+        
+         if(sourceELIndex>=targetELIndex) 
+         {//move up           
+              var s = sourceELIndex-1; 
+              var t = targetELIndex-1; 
+         }else{    
+              var s = sourceELIndex-1; 
+              var t = targetELIndex; 
+         }  
+         var sourceEL = getTRByIndex(s); 
+         var targetEL = getTRByIndex(t); 
+          //alert("begin"+sourceELIndex+targetELIndex); 
+         //alert("begin"+s+t); 
+         tbObject.insertBefore(sourceEL,targetEL); 
+         resultEL = sourceEL; 
+         return resultEL;      
+     } 
+} 
+
+跨浏览器开发经验总结（四） —— 怎么写入剪贴板 
+IE、 Firefox可以支持JavaScript往剪贴板写入内容 
+
+IE可以很方便的支持剪贴板内容写入命令，可以使用execCommand()，也可以利用window.clipboardData。 
+
+使用execCommand，需要先从页面选中要复制到剪贴板的内容，如以下代码： 
+var doc = obj.createTextRange(); 
+doc.select(); 
+doc.execCommand('copy'); 
+
+使用window.clipboardData的方法如下，代码中同时实现了Firefox下写入剪贴板的功能： 
+if(window.clipboardData) //IE 
+              { 
+                window.clipboardData.clearData(); 
+                window.clipboardData.setData("Text", txt); 
+              }             
+              else if (window.netscape) 
+              { 
+                  try                   {                      netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect"); 
+                  } 
+                  catch (e) 
+                  { 
+                      alert("please visit 'about:config' and set signed.applets.codebase_principal_support as 'true'"); 
+                      //提示用户开放浏览器的安全性设置 
+                  } 
+                 
+                  var clip = Components.classes["@mozilla.org/widget/clipboard;1"].createInstance(Components.interfaces.nsIClipboard); 
+                  if (!clip) 
+                      return; 
+                  var trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
+                  if (!trans) 
+                      return; 
+                  trans.addDataFlavor('text/unicode'); 
+                  var str = new Object(); 
+                  var len = new Object(); 
+                  var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString); 
+                  var copytext = txt; 
+                  str.data = copytext;                 
+　　　　　　 trans.setTransferData("text/unicode",str,copytext.length*2); 
+                  var clipid = Components.interfaces.nsIClipboard; 
+                  if (!clip) 
+                  return;                 
+　　　　　　 clip.setData(trans,null,clipid.kGlobalClipboard); 
+} 
+以上代码可以实现在IE、Firefox中往剪贴版写入自定义内容，但是opera和webkit内核浏览器对安全性要求更高，不支持这种javascript直接操作剪贴板内容的方式，只能通过别的脚本语言“曲线救国”了。 
+Opera 、Safari、Chrome使用ActionScript往剪贴板写入内容 
+
+具体的实现可以将原本的动作按钮用flex或flash实现其外观，替换原来的图片或文字按钮，然后在点击该按钮时，执行以下ActionScript脚本: 
+//从浏览器环境中获得需要写入到剪贴板的内容 
+var s:String = String(ExternalInterface.call("getURL4Clipboard"));  //getURL4Clipboard是页面上return剪贴板内容的javascript方法 
+//设置剪贴板内容 
+System.setClipboard(s); 
+//调用完成设置剪贴板内容后需要继续的JavaScript函数，比如提示用户信息等 
+ExternalInterface.call("copyURLCompleted");  //copyURLCompleted是页面上的javascript方法，继续执行复制后的工作 
+
+跨浏览器开发经验总结（五） —— 事件 
+简单事件模型和高级事件模型 
+
+简单事件，就是事件与页面元素直观的绑定在一起的形式，如： 
+<div onclick="alert(this.innerHTML);"> 
+element.onclick = function(){alert(this.innerHTML);} 
+只要不是用了个别浏览器独有的事件，一般的click，mouseover事件等在各浏览器中都可以这么使用。 
+但是当一个事件需要绑定多个监听，或者需要动态注册/移出监听时，简单事件模型就不够用了，需要使用高级事件模型（IE和其他浏览器在使用高级事件模型时就有区别了）： 
+//注册 
+  function addEventHandler(element, evtName, callback, useCapture) {        
+     //DOM标准 
+      if (element.addEventListener) { 
+            element.addEventListener(evtName, callback, useCapture); 
+      } else { 
+         //IE方式,忽略useCapture参数 
+         element.attachEvent('on' + evtName, callback); 
+      } 
+  } 
+  //移除 
+  function removeEventHandler(element, evtName, callback, useCapture) {        
+     //DOM标准 
+      if (element.removeEventListener) { 
+            element.removeEventListener(evtName, callback, useCapture); 
+      } else { 
+         //IE方式,忽略useCapture参数 
+         element.dettachEvent('on' + evtName, callback); 
+      } 
+  } 
+<a>标签中onclick事件与href属性的调用顺序关系 
+
+在a标签响应点击事件时，会先进行onclick事件的响应，再执行href中的跳转方法。如以下标签点击后会先后提示“button”和“href”： 
+<a href=”javascript:alert(“href”);” onclick="alert(this.innerHTML);"> button </a> 
+但是，最好不要在href中定义具体的javascript方法，因为这个是定义跳转的链接地址的属性，如果需要先后执行两个javascript方法，应该这样写： 
+<a href=”#” onclick="alert(this.innerHTML); alert(“href”);"> button </a> 
+但是上面的写法中如果onclick绑定的响应方法中并没有提交请求跳转至别的页面，那么会发现当前网页做了一次刷新，因为以上代码中href=“#”表示跳转到当前页的顶部，但是并没有发出新的html请求。有的时候，我们并不希望页面在响应onclick事件后又跳回顶部（尤其是页面高度较长，出现滚动条，并且该链接位于页面底部时，跳转至顶部后用户还需要拖动滚动条找回原来位置继续操作时），那么应该在onclick后返回false值，阻止继续进行href定义的动作，如： 
+<a href=”#” onclick="alert(this.innerHTML); alert(“href”);return false；"> button </a> 
+或者将#替换成空的javascript语句： 
+<a href=”javascript:void(0)” onclick="alert(this.innerHTML); alert(“href”);"> button </a> 
+
+onload事件的调用顺序 
+
+有的时候在页面初始化时需要调用一些脚本来设置页面元素的初始状态，最标准的做法是用<body onload=””>方式或者document.onload方式调用。onload的事件的触发会在页面元素渲染完毕之后调用，这样就保证了不会出现脚本执行时找不到未渲染的页面元素的情况。如果是在<head>区域的<script>块中执行脚本，并使用了页面元素时，就很有可能出现找不到元素的错误。如果是在<body>区域的<script>块中执行脚本，只能使用该<script>块之前的页面元素，因为<body>区域的元素基本是顺序解析的。 
+onchange事件 
+
+<input>元素和<select>的<option>元素都支持onchangge事件，但是经常我们会发现元素的内容值变化了却没有触发onchangge事件。这是因为onchange事件的触发还有另一个条件:当前元素处于失去焦点(onblur)的状态。所以，onchange事件只能捕获用户操作时的值变化，对于使用javascript脚本动态改变元素value的情况，它是捕获不到的。 
+事件截获 
+
+因除了IE之外的浏览器不能识别window.event所以要使用以下方式来获取当前事件和事件发生的目标元素： 
+var evt = e?e:(window.event?window.event:null); 
+var el = evt.srcElement?evt.srcElement:evt.target; 
+
+跨浏览器开发经验总结（六） —— XML文档处理 & XMLHttpRequest对象 
+XML文档处理 
+
+加载xml文件 
+
+IE: 
+xmlDoc=new ActiveXObject("Microsoft.XMLDOM"); 
+xmlDoc.async="false"; 
+xmlDoc.load("books.xml"); 
+其他浏览器: 
+xmlDoc=document.implementation.createDocument("","",null); 
+xmlDoc.async="false"; 
+xmlDoc.load("books.xml"); 
+
+加载xml字符串 
+
+IE: 
+xmlDoc=new ActiveXObject("Microsoft.XMLDOM"); 
+xmlDoc.async="false"; 
+xmlDoc.loadXML(txt); 
+其他浏览器: 
+parser=new DOMParser(); 
+xmlDoc=parser.parseFromString(txt,"text/xml"); 
+selectNodes()、selectSingleNode()方法 
+
+这两个方法是IE才有的,如果考虑跨浏览器,请尽量使用标准DOM操纵方式替代,或者在其他浏览器中先实现以上方法再使用。 
+xml属性 
+
+IE可以用obj.xml来显示obj的节点内容，但是这个属性是其他浏览器没有，所以要用(new XMLSerializer()).serializeToString(obj)方法来显示节点内容。 
+
+XMLHttpRequest对象 
+
+获得IE和其他浏览器中的XMLHttpRequest对象 
+
+获得IE和其他浏览器中的XMLHttpRequest对象 
+function getXMLHTTPRequest() 
+{ 
+    var myRequest = null; 
+    if(window.XMLHttpRequest)   // IE以外的浏览器 
+    {        
+        myRequest = new XMLHttpRequest(); 
+    } 
+    else if(typeof ActiveXObject != "undefined")  // IE 
+    {              
+        myRequest = new ActiveXObject("Microsoft.XMLHTTP"); 
+    }          
+    return myRequest;          
+} 
+然后我们就可以使用上面的方法来进行请求操作了。 
+    var myRequest = getXMLHTTPRequest()； 
+    xmlhttp.onreadystatechange=stateChange； 
+    xmlhttp.open("GET",url,true); 
+    xmlhttp.send(null); 
+
+open方法参数说明 
+
+xmlhttp.open("GET",url,true)里第一个参数表示请求的方式，“POST”或者“GET”；第二个参数是发送请求的地址；第三个参数是表示是否用异步方式进行请求。如果采用异步方式请求，那么浏览器会在send请求后等待请求地址的响应同时，继续执行send之后的语句，得到响应后执行xmlhttp.onreadystatechange设置的名为stateChange的回调方法，所以要把得到响应后的后继操作写在这个回调方法里。 
+需要注意的是如果采用同步方式发送请求，浏览器会等请求响应后才执行send之后的语句，所以最好是把响应后的操作直接写在send语句之后，而不是像异步方式请求那样写在xmlhttp.onreadystatechange设置的回调方法中，因为各浏览器在同步请求后是否还执行这个回调方法上还是有些不一致的地方：比如firefox3.0在发送同步请求得到响应后就不触发onreadystatechange事件，自然就不会执行这个回调方法了。 
+send方法参数的默认值设置 
+
+不同浏览器的XMLHttpRequest虽然接口一样，但在不同浏览器中调用XMLHttpRequest的方法和属性却不尽相同。如send方法，在IE中可以不传参数，如myXMLHttpRequest.send();仍然可以正常工作，而在firefox中，必须为send方法传一个参数，也就是说，在firefox中send方法参数没有默认值，必须为其赋值，哪怕是null也可以。
