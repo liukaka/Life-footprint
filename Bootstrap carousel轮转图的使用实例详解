@@ -1,0 +1,233 @@
+代码：
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="css/bootstrap.min.css" />
+<style>
+body {
+padding: 10px;
+margin: 10px;
+}
+</style>
+</head>
+<body>
+<div id="myCarousel" class="carousel">
+<!--第一步：设计轮播图片的容器。-->
+<!-- #slidershow 层添加 slide 样式，使用图片与图片切换效果有平滑感-->
+<ol class="carousel-indicators">
+<!--第二步：设计轮播图片计数器。-->
+<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+<li data-target="#myCarousel" data-slide-to="1"></li>
+<li data-target="#myCarousel" data-slide-to="2"></li>
+</ol>
+<div class="carousel-inner">
+<!--第三步：设计轮播图片播放区,使用 carousel-inner 样式来控制-->
+<div class="item active">
+<img src="http://images3.c-ctrip.com/rk/201407/ll580x145.jpg" alt="">
+<div class="carousel-caption">
+<h4>标题一</h4>
+<p>图片一内容简介</p>
+</div>
+</div>
+<div class="item">
+<img src="http://images3.c-ctrip.com/dj/201408/zj/zj_580145.jpg" alt="">
+<div class="carousel-caption">
+<h4>标题二/h4>
+<p>图片二内容简介</p>
+</div>
+</div>
+<div class="item">
+<img src="http://images3.c-ctrip.com/rk/201403/yfdd580145a.png" alt="">
+<div class="carousel-caption">
+<h4>标题三</h4>
+<p>图片三内容简介</p>
+</div>
+</div>
+</div>
+<!--第四步：设计轮播图片控制器。向前播放left carousel-control和向后播放的控制器-->
+<a class="left carousel-control" href="#myCarousel" data-slide="prev">‹
+<!--<a class="left carousel-control" href="#slidershow" role="button" data-slide="prev">-->
+<span class="qlyphicon glyphicon-chevron-left"></span></a>
+<a class="right carousel-control" href="#myCarousel" data-slide="next">›
+<span class="qlyphicon glyphicon-chevron-right"></span></a>
+<!--<a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+<span class="qlyphicon glyphicon-chevron-left"></span>
+</a>
+<a class="left carousel-control" href="#carousel-example-generic" data-slide="next">
+<span class="qlyphicon glyphicon-chevron-right"></span>
+</a>-->
+</div>
+<script>
+$('.carousel').carousel()
+</script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<!--<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>-->
+<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+</body>
+</html> 
+/*bootstrap.css文件第5835行～第5863行*/
+.carousel-indicators {
+position: absolute; /*整个计数区域绝对定位*/
+bottom: 10px; /*距容器carousel底部10px*/
+z-index: 15; /*设置其在Z轴的层级*/
+/*让整个计数区水平居中*/
+left: 50%;
+width: 60%;
+padding-left: 0;
+margin-left: -30%;
+text-align: center;
+list-style: none;
+}
+.carousel-indicators li {
+display: inline-block;
+width: 10px;
+height: 10px;
+margin: 1px;
+text-indent: -999px;
+cursor: pointer;
+background-color: #000 \9;
+background-color: rgba(0, 0, 0, 0);
+border: 1px solid #fff;
+border-radius: 10px;
+}
+/*设置当前状态样式*/
+.carousel-indicators .active {
+width: 12px;
+height: 12px;
+margin: 0;
+background-color: #fff;
+}
+图片轮播--声明式触轮播图的播放
+触发轮播图的播放方法也有两种，一种是声明式，另外一种是JavaScript方式。首先来看声明式方法。
+声明式方法是通过定义 data 属性来实现，data 属性可以很容易地控制轮播的位置。其主要包括以下几种：
+•data-ride 属性：取值 carousel，并且将其定义在 carousel 上。
+•data-target 属性：取值 carousel 定义的 ID 名或者其他样式识别符，如前面示例所示，取值为“#slidershow”，并且将其定义在轮播图计数器的每个 li 上。
+•data-slide 属性：取值包括 prev，next，prev表示向后滚动，next 表示向前滚动。该属性值同样定义在轮播图控制器的 a 链接上，同时设置控制器 href 值为容器 carousel 的 ID 名或其他样式识别符。
+•data-slide-to 属性：用来传递某个帧的下标，比如 data-slide-to="2"，可以直接跳转到这个指定的帧（下标从0开始计），同样定义在轮播图计数器的每个 li 上。
+除了data-ride="carousel"、data-slide、data-slide-to 以外，轮播组件还支持其他三个自定义属性：
+属性名称
+类型
+默认值
+描述
+data-interval
+number
+5000
+幻灯片轮换的等待时间（毫秒）。如果为false,轮播将不会自动开始循环
+data-pause
+string
+hover
+默认鼠标悬停留在幻灯片区域即停止播放，离开即开始播放
+data-wrap
+布尔值
+true
+轮播是否持续循环
+如下代码实现“轮播不持续循环”和“轮播时间间隔为1秒”。
+<div id="slidershow" class="carousel" data-ride="carousel" data-wrap="false" data-interval="1000">
+......
+</div>
+上面三个属性可以在容器元素上定义，也可以在标示符（或左右控制链接）上定义，但是后者定义的优先级比较高。
+图片轮播--JavaScript触发方法
+data-ride="carousel" 和 data-slide="prev"、 data-slide="next" 三个语句去掉了，我们来使用JS代码实现“图片自动轮播”和“向前、向后按钮”的功能实现。
+使用JS实现“图片自动轮播”和“向前、向后按钮”的功能实现
+默认情况之下，如果 carousel 容器上定义了 data-ride="carousel" 属性，页面加载之后就会自动加载轮播图片切换效果。如果没有定义 data-ride 属性，可以通过 JavaScript 方法来触发轮播图片切换。具体使用方法如下：
+复制代码 代码如下:
+
+$(".carousel").carousel(); 
+也可以通过容器的 ID 来指定：
+复制代码 代码如下:
+
+$("#slidershow").carousel(); 
+在 carousel() 方法中可以设置具体的参数，如：
+属性名称
+类型
+默认值
+描述
+interval
+number
+5000
+幻灯片轮换的等待时间（毫秒）。如果为false,轮播将不会自动开始循环
+pause
+string
+hover
+默认鼠标悬停留在幻灯片区域即停止播放，离开即开始播放
+wrap
+布尔值
+true
+轮播是否持续循环
+使用时，在初始化插件的时候可以传关相关的参数，如：
+$("#slidershow").carousel({
+interval: 3000
+});
+实际上，当我们给carousel()方法配置参数之后，轮播效果就能自动切换。但 Bootstrap 框架中的 carousel 插件还给使用者提供了几种特殊的调用方法，简单说明如下：
+•.carousel("cycle")：从左向右循环播放；
+•.carousel("pause")：停止循环播放；
+•.carousel("number")：循环到指定的帧，下标从0开始，类似数组；
+•.carousel("prev")：返回到上一帧；
+•.carousel("next")：下一帧
+例如，前面的调用方法，向前和向后两个按钮还无法正常工作，其实可以通过 .carousel("prev") 和 .carousel("next") 方法让他们能正常工作，代码如下：
+$(function(){
+$("#slidershow").carousel({
+interval:2000
+});
+$("#slidershow a.left").click(function(){
+$(".carousel").carousel("prev");
+});
+$("#slidershow a.right").click(function(){
+$(".carousel").carousel("next");
+});
+}); 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<style>
+body {
+padding: 10px;
+margin: 10px;
+}
+</style>
+</head>
+<body>
+<div id="carousel-example" class="carousel slide" data-ride="carousel">
+<!-- Indicators -->
+<ol class="carousel-indicators">
+<li data-target="#carousel-example" data-slide-to="0" class="active"></li>
+<li data-target="#carousel-example" data-slide-to="1"></li>
+<li data-target="#carousel-example" data-slide-to="2"></li>
+</ol>
+<!-- Wrapper for slides -->
+<div class="carousel-inner">
+<div class="item active">
+<img src="http://bfsu.sinaapp.com/wp-content/themes/bfsu/i/homepix/home5.jpg" alt="..." />
+<div class="carousel-caption">...</div>
+</div>
+<div class="item">
+<img src="http://bfsu.sinaapp.com/wp-content/themes/bfsu/i/homepix/home2.jpg" alt="..." />
+<div class="carousel-caption">...</div>
+</div>
+<div class="item">
+<img src="http://bfsu.sinaapp.com/wp-content/themes/bfsu/i/homepix/home3.jpg" alt="..." />
+<div class="carousel-caption">...</div>
+</div>
+</div>
+<!-- Controls -->
+<a class="left carousel-control" href="#carousel-example" data-slide="prev">
+<span class="glyphicon glyphicon-chevron-left"></span></a>
+<a class="right carousel-control" href="#carousel-example" data-slide="next">
+<span class="glyphicon glyphicon-chevron-right"></span></a>
+</div>
+<!--<script>
+$(function() {
+$('.carousel').carousel();
+});
+</script>-->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<!--<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>-->
+<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+</body>
+</html>
