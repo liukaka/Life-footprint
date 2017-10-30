@@ -449,3 +449,4 @@ function redirect()
 parent.document.frames["frameSublist"].location.href="www.baidu.com" 
 } 
 </script>
+经实测父页面向子页面写入值代码为: $(document.getElementById('Iframe').contentWindow.document.body).text("123");
