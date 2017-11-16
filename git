@@ -1,0 +1,497 @@
+Workspace：工作区
+
+Index / Stage：暂存区
+
+Repository：仓库区（或本地仓库）
+
+Remote：远程仓库
+
+文件几种状态
+
+untracked：git未跟踪的文件，新增的文件未 git add 就会处于这种状态
+not staged：被索引过又被修改了的文件
+staged：通过 git add后即将被提交的文件
+创建新仓库
+
+# 在当前目录
+git init
+配置
+
+# 显示当前的Git配置
+git config –list
+
+# 编辑Git配置文件
+git config -e [–global]
+
+# 设置提交代码时的用户信息
+git config [–global] user.name "example"
+git config [–global] user.email "example@gmail.com"
+
+# 配置自动换行，提交到git时自动将换行符转换为lf
+git config --global core.autocrlf input
+
+# 配置密钥
+ssh-keygen -t rsa -C example@gmail.com # 生成密钥
+ssh -T git@github.com # 测试是否成功
+
+# 配置别名，--global 表示全局配置
+git config --global alias.st status
+
+git config --global alias.co checkout
+
+git config --global alias.br branch
+
+git config --global alias.ci commit
+
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+检出仓库
+
+# 创建一个本地仓库的克隆版本：
+git clone /path/to/repository
+
+# 如果是远端服务器上的仓库：
+git clone username@host:/path/to/repository
+
+# 克隆到自定义文件夹：
+git clone username@host:/path/to/repository my-cloned-repo
+新建仓库常见流程
+
+# 初始化
+git init
+
+# 获取状态
+git status
+
+git add README.md
+
+git commit -m "message"
+
+# 连接远程仓库
+git remote add origin git@github.com:example/test.git
+
+# 推送内容到远程仓库的同时设置默认跟踪分支
+git push -u origin master
+gitignore
+
+vim .gitignore
+!为模式取反
+
+*.a
+!lib.a
+添加、删除
+
+# 添加指定文件到暂存区
+git add [file1] [file2] ...
+
+# 添加指定目录到暂存区，包括子目录
+git add [dir]
+
+# 添加当前目录的所有文件到暂存区，.或*代表全部添加
+git add .
+
+# 添加每个变化前，都会要求确认
+# 对于同一个文件的多处变化，可以实现分次提交
+git add -p
+
+# 删除工作区文件，并且将这次删除放入暂存区
+git rm [file1] [file2] ...
+
+# 停止追踪指定文件，但该文件会保留在工作区
+git rm --cached [file]
+
+# 文件重命名，并加入暂存区
+git mv [file-original] [file-renamed]
+
+# 通配符批量移动
+git mv *.html src/
+提交
+
+git commit -m "message"
+
+# 补提交文件，提交时漏掉了某些文件时不应该再单独提交一次
+git commit --amend
+
+# 覆盖提交日期，不知道有啥实际用途
+git commit -m "message" --date "2017-01-01 00:00:00"
+branch
+
+# 列出所有本地分支
+git branch
+
+# 新建一个分支，但依然停留在当前分支
+git branch [branch-name]
+
+# 新建一个分支，并切换到该分支
+git checkout -b [branch]
+
+# 切换到指定分支，并更新工作区
+git checkout [branch-name]
+
+# 切换到上一个分支
+git checkout -
+
+# 建立追踪关系，在现有分支与指定的远程分支之间
+git branch --set-upstream [branch] [remote-branch]
+
+# 根据一个特定的提交创建新分支，忘记开新的分支就修改并提交了代码时的处理
+git branch test-branch HEAD~1
+
+# 删除分支
+git branch -d [branch-name]
+
+# 重命名分支
+git branch -m oldBranch newBranch
+
+# 推送分支到远程仓库
+git push origin [branch-name]
+
+# 删除远程分支
+$ git push origin --delete [branch-name]
+$ git branch -dr [remote/branch]
+tag
+
+# 列出所有tag
+git tag
+
+# 显示 tag list 和注解
+git tag -n
+
+# 在当前commit新建一个轻标签
+git tag [tagname]
+
+# 在指定commit新建一个tag
+git tag [tagname] [commit]
+
+# 添加注解标签
+git tag -a [tagname]
+
+# 添加注解标签并添加注解
+git tag -am "message" [tagname]
+
+# 删除本地tag
+git tag -d [tagname]
+
+# 删除远程tag
+git push origin :refs/tags/[tagName]
+
+# 推送所有tag
+git push --tags
+
+# 新建一个分支，指向某个tag
+git checkout -b [branch] [tagname]
+
+# 切换到tag
+git checkout [tagname]
+
+# tag和分支同名时，显示指定切换到tag
+git checkout tags/[tagname]
+远程仓库和合并分支
+
+git remote
+
+# 查看远程仓库的 URL
+git remote -v
+
+# 添加远程仓库
+git remote add origin git@github.com:example/test.git
+
+# 删除远程仓库
+git remote rm origin
+
+# 修改远程仓库地址
+git remote set-url origin [url]
+
+# 将本地的远端和远端进行同步
+git fetch origin
+
+# 将本地的远端合并到本地分支
+git merge origin/master
+
+# 拉取远程仓库，这相当于上面两条命令
+git pull origin master
+
+# 使用rebase可以使提交的历史记录显得更简洁
+git rebase mater
+
+# 也可以指定分支：
+git pull origin remote:local
+
+# 推送：
+git push origin local:remote
+改写提交
+
+# 摘出某个提交
+git cherry-pick [hash]
+
+# 交互式提交，当涉及提交修改时使用，如 squash、调整 commit 顺序等
+git rebase -i
+git rebase -i HEAD~4
+
+# 将 upstream 后的 commit 节点嫁接到 newbase，如果有 branch ，会先 checkout 到这个 branch，再 rebase
+git rebase --onto <newbase> <upstream> <branch>
+
+# 删除 topicA~3、topicA~4 这两个 commit
+git rebase --onto topicA~5 topicA~3 topicA
+
+# 中途要停止rebase操作
+git rebase --abort
+
+# 复原到rebase之前的状态
+git reset --hard ORIG_HEAD
+1）squash合并多个提交：
+
+在编辑 commit message 时 hash 值前的p(pick)表示 use commit，s(squash)表示 use commit, but meld into privious commit
+
+所以我们可以在 push 到远程仓库之前，把多个 commit 合并成一个。
+
+2）edit使提交成退出状态
+
+除了p、s，常用的还有e(edit)表示 use commit, but stop for amending。保存退出后，修改过的提交呈现退出状态。用 git commit --amend 保存修改，然后 git rebase --continue 。这时，有可能其他提交会发生冲突, 请修改冲突部分后再执行 git add 和 git rebase --continue 。这时不需要提交。
+
+3）merge squash：
+
+# 在 merge 特性分支时，把所有的新提交合并成一个
+git merge feature-branch --squash
+暂存
+
+# 暂时将未提交的变化移除，稍后再移入
+git stash
+
+# 查看所有被隐藏的文件列表
+git stash list
+
+# 恢复暂存的文件，不从list中删除
+git stash appl
+
+# 从list中删除
+git stash drop
+
+# 恢复暂存的文件，并从list中删除
+git stash pop
+撤销
+
+# 遗弃提交
+git reset
+
+# 把当前的 HEAD 重置到前一个，丢弃最新commit
+git reset HEAD~1
+
+# 撤销上一次提交，并且变更还保持在 staging area
+git reset HEAD~1 --soft
+
+--soft 只取消提交,将上一次的修改放入 staging area，不修改索引和工作树
+
+--mixed 默认模式，复原修改过的索引的状态，将上一次的修改放入 working directory，修改索引，不修改工作树
+
+--hard 彻底取消最近的提交，直接将上一次的修改抛弃，修改索引和工作树
+
+三种都会修改HEAD位置
+
+# 抛弃某一次的修改，使用上次提交的版本
+git checkout
+
+# 安全地取消过去发布的提交
+git revert
+git revert HEAD~2
+1）git reset与checkout区别:
+
+git reset 使用仓库中的版本覆盖 staging area 中的，如果 working directory 该文件没有其他修改，则 staging area 中的修改将应用到 working directory 中。反之working directory 中的版本将被保留，丢弃 staging area 中的修改。
+
+git checkout 则是使用 staging area 的中的版本覆盖 working directory。
+
+2）git revert与reset区别：
+
+与 reset 不同的是，revert 只会撤销当前的 commit，而之后的 commit 操作的修改还会保留，但是 reset 还会将之后的所有 commit 操作的修改全部退回 staging area 或丢弃。
+
+3）撤消合并:
+
+假如还没推送到远端，可以reset掉
+git reset --hard HEAD~
+
+如果已经推动到远端，可以用revert
+git revert -m 1 HEAD
+diff
+
+# 显示暂存区和工作区的差异
+git diff
+
+# 显示暂存区和上一个commit的差异
+git diff --cached [file]
+
+# 显示工作区与当前分支最新commit之间的差异
+git diff HEAD
+
+# 显示两次提交之间的差异
+git diff [first-branch]...[second-branch]
+
+# 显示今天你写了多少行代码
+git diff --shortstat "@{0 day ago}"
+log
+
+# 以图形展示
+git log –graph
+
+# 可以显示包含标签资料的历史记录
+git log --decorate
+
+# 单行显示过去5次提交
+git log -5 --pretty --oneline
+
+# 显示第一个父commit节点，而不显示merge的commit节点，这样会有一个更清晰的视图
+git log –first-parent
+
+# 显示全部分支
+git log –all
+
+# 更清晰地显示
+git log --graph --decorate --pretty=oneline --abbrev-commit --all
+
+git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+其他命令
+
+# 查看某个文件的修改人
+git blame
+
+# 优化git仓库，git repack 将版本库未打包的松散对象打包
+git repack -d
+
+# 条件搜索及正则表达式搜索
+git grep
+git grep "TODO"
+
+# 二分法查找快速定位到bug位置
+git bisect
+git bisect HEAD origin
+git bisect run make test
+git bisect reset
+
+# 可以列出所有的操作记录，通过reflog找到 commit 的hash，然后 cherry-pick 找回
+git reflog
+
+# 获取命令的帮助信息
+git help [命令]
+git [命令] --help
+
+# 获取当前的状态，git会提示接下来的能做的操作
+git status
+
+# Git 组织大型项目的一种方式
+git submodule
+git内部
+
+Git仓库下有一个.git目录，一般包括下面的内容：
+
+config
+index
+HEAD
+hooks/
+info/
+logs/
+objects/
+refs/
+1）config
+
+仓库的配置文件
+
+2）index
+
+索引，index文件保存暂存区信息
+
+3）HEAD
+
+HEAD文件指示目前被检出的分支
+
+4）objects
+
+你提交到一个Git代码仓库中的所有文件，包括每个提交的说明信息（the commit info）都在目录 .git/objects/中存储为实体。
+
+一个实体以一个40字符长度的字符串（该实体内容的SHA1哈希值）来标识。
+
+实体有4类:
+
+blob - 存储文件内容
+tree - 存储目录结构和文件名
+commit - 存储提交的说明，组成Git的提交图谱
+tag - 存储带注解的标签（tag）
+5）refs
+
+Git中，一个分支（branch）、远程分支（remote branch）或一个标签（tag）（也称为轻量标签）仅是指向一个实体的一个指针，这里的实体通常是一个commit实体。
+
+这些引用以文本文件的形式存储在目录.git/refs/中。
+
+refs/heads/xxx 本地分支
+refs/remotes/origin/xxx 远端分支
+refs/tags/xxx 本地tag
+git提交规范
+
+feat: 添加了xx功能
+
+xx功能描述
+阮一峰Commit message 和 Change log 编写指南
+
+三种工作流程
+
+1）Git flow：项目存在两个长期分支，主分支 master 和开发分支 develop。这个模式是基于"版本发布"的，而补是"持续发布"
+
+2）Github flow：只有一个长期分支，就是 master，"持续发布"
+
+3）Gitlab flow：Gitlab flow 的最大原则叫做"上游优先"（upsteam first），即只存在一个主分支 master，它是所有其他分支的"上游"。只有上游分支采纳的代码变化，才能应用到其他分支。
+
+阮一峰Git 工作流程
+
+命令行
+
+常用命令行
+
+pwd        显示当前工作目录          process working directory
+cd         切换目录                 change directory
+mkdir      创建目录                 make directory
+mkdir -p   递归创建多个目录          --parents no error if existing, make parent directories as needed
+ls         列出目录内容             list
+ls -a      可以显示.开头的文件       all
+ls -l      列出文件的详细信息        long listing format
+touch      创建文件                
+rm/rmdir   删除文件/目录             remove
+rm -r      删除目录                  --recursively
+mv         文件或目录的移动或更名     move
+cp         将文件拷贝至另一文件       copy
+echo       输出到文件                  like echo 1 > test.txt
+cat        显示文件内容和合并多个文件   like cat test.txt,also like cat file1 file2 > file
+less       按页显示文件                  
+clear      清屏（ctrl + l）
+history    查看最近用过的命令
+du         统计目录／文件所占磁盘空间的大小    disk usage                                    
+du -sh     以易读的方式显示总共大小           --summarize --human-readable
+ps         报告程序状况                      process status
+head       显示开头某个数量的文字区块         like head -n 3 test.txt
+tail       显示结尾某个数量的文字区块
+ping       网络管理常用的3个命令
+ipconfig
+netstat
+xxx -h     至少可以通过以下三种中的一种获取命令的帮助信息
+xxx --help
+man    xxx
+快捷键
+
+Ctrl + A ：光标移动到行首
+
+Ctrl + E ：光标移动到行尾
+
+Ctrl + U ：删除光标所在位置之前的所有字符（不含当前位置字符）
+
+Ctrl + K ：删除光标所在位置之后的所有字符（含当前位置字符）
+
+Ctrl + W ：删除光标所在位置之前的一个单词
+
+Ctrl + R ：根据输入搜索以往使用过的命令
+小技巧
+
+Alt + .     使用上一次命令的最后一个参数
+!!          上一次命令
+↑           显示上一次命令
+.           当前目录
+..          上一层目录
+~           根目录
+-           上一次目录
+|           管道(pipe)，前一个命令的输出为后一个命令的输入，like cat test.txt | less
+多个命令之间可以用;或&&分隔，前者命令错误不中断
