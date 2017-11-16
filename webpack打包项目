@@ -1,0 +1,88 @@
+webpack是前端开发中比较常用的打包工具之一，另外还有gulp，grunt。之前没有涉及过打包这块，这里介绍一下使用webpack打包的流程。
+Grunt和Gulp的工作方式是：在一个配置文件中，指明对某些文件进行类似编译，组合，压缩等任务的具体步骤，这个工具之后可以自动替你完成这些任务。
+
+Webpack的工作方式是：把你的项目当做一个整体，通过一个给定的主文件（如：index.js），Webpack将从这个文件开始找到你的项目的所有依赖文件，使用loaders处理它们，最后打包为一个浏览器可识别的JavaScript文件。
+
+下面我们新建一个项目来详细描述一下使用webpack打包项目的过程：
+1.安装好npm，这个不再复述，然后在一个目录下执行 npm init，这样就会初始化一个项目包，里面就有了一个package.json的文件，这个文件想必大家都有所了解
+2.然后安装一下webpack，既然我们想打包，就要把webpack这个工具安装好，安装方式有两种，一个是全局安装一个是安装在项目中，在项目的package.json目录下执行的命令分别是npm install -g webpack 和 npm install --save-dev webpack，在这里我们安装在项目里面，使用第二种安装方式
+3.安装完成之后我们能看到项目目录下有一个node_module的文件夹，然后我们就可以写自己的项目了，我们首先建立一个app和public的文件夹，在app中新建两个文件，分别是test.js和main.js，在pulic中新建一个index.html文件，这样我们的基本项目雏形就产生了
+
+4.我们在index.html中写入一下片段：
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Webpack Project</title>
+  </head>
+  <body>
+    <div id='root'>
+    </div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
+5.我们在test.js中写入这样一个除了方法：
+//test.js
+module.exports = function() {
+  var test= document.createElement('div');
+  test.textContent = "Hi there and testing!";
+  return test;
+};
+6.我们在main.js中把test.js的方法导入进来：
+//main.js 
+var test= require('./test.js');
+document.getElementById('root').appendChild(test());
+7.下面我们就可以使用webpack工具进行打包了，在项目的根目录，也就是包含node_module的目录下执行下面这个命令node_modules/.bin/webpack app/main.js public/bundle.js，这条命令的是使用webpack把打包后的文件命名为bundle.js放在public文件夹下，其中app/main,js是项目的入口。我们能看到终端上会打印出包含这样的log
+
+8.这就说明我们的打包工作完成了，然后我们打开index.html文件就能看到我们输入的内容：Hi there and testing!
+9.这样要配置项目入口，又要配置输出文件名之类的东西，在命令行输入比较麻烦，我们可以使用文件配置的方式，在项目的根目录中新建一个webpack.congfig.js的文件，把下面这些内容写入进去
+module.exports = {
+  entry:  __dirname + "/app/main.js",//已多次提及的唯一入口文件
+  output: {
+    path: __dirname + "/public",//打包后的文件存放的地方
+    filename: "bundle.js"//打包后输出文件的文件名
+  }
+}
+这样我们就可以直接使用node_modules/.bin/webpack直接进行打包操作了
+10.如果我们不想使用node_modules/.bin/webpack这样的命令，习惯使用npm xxx之类的，我们在我们的package.json中设置一下启动命令即可：
+"scripts": {
+    "webpack": "webpack" //配置的地方就是这里啦
+  }
+然后我们直接执行npm run webpack同样可以执行打包任务
+11.接下来我们介绍，如何直接引入json类型的文件，这里我们使用loaders模块，先说一下应用场景吧。我们现在有一个json文件，我们想把它导入到模块中，然后读取里面的信息，下面我们的文件目录是这样的：
+
+12.如果我们想在任意一个模块，如test.js或者main.js中导入这个json文件，比如，我们的test.json文件中有这样一个内容
+//test.json
+{
+  "Test": "Hi there and geetings from JSON!"
+}
+我们想在test.js使用这样Test字段
+var test = require('./test.json');
+
+module.exports = function() {
+  var geet = document.createElement('div');
+  geet.textContent = test.greetText;
+  return geet;
+};
+我们就要引入json-loader，具体的办法是：在根目录下执行
+//安装可以装换JSON的loader
+npm install --save-dev json-loader
+然后把我们的webpack.config.js配置成下面这样
+module.exports = {
+  entry:  __dirname + "/app/main.js",
+  output: {
+    path: __dirname + "/public",
+    filename: "bundle.js"
+  },
+
+  module: {//在配置文件里添加JSON loader
+    loaders: [
+      {
+        test: /\.json$/,
+        use: "json-loader"
+      }
+    ]
+  }
+}
+最后我们执行一下npm run webpack，打包完成，打开index.html页面就会显示test.json里面的Hi there and geetings from JSON!这个内容
+13.如果我们想把css样式也一起打包，就npm install --save-dev style-loader css-loader，然后在webpack.config.js进行相应的配置就行了，这样是把js和css打包成一个文件，也可以把他们分开打包，这样后面再介绍吧
