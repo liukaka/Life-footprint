@@ -1,0 +1,9 @@
+1.addEventListener is not a function这是因为选择器没有正确选择元素对象
+  document.getElementsByClassName(...)捕捉到的是该类名元素的数组
+  正确的访问方式应该是：
+  document.getElementsByClassName(...)[0].addEventListener...
+  使用遍历为每个class添加监听：
+  var classObj = document.getElementsByClassName(...);
+  for(i=0;i<classObj.length;i++){
+  classObj[i].addEventListener...
+  }
