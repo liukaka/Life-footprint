@@ -1,0 +1,12 @@
+目前在开发中经常要用到的几种形式有:
+
+1	self.location.href;
+2	window.location.href;
+3	this.location.href;
+4	location.href;
+5	parent.location.href;
+6	top.location.href;    
+
+"top.location.href"是最外层的页面跳转
+"window.location.href"、"location.href"是本页面跳转
+"parent.location.href"是上一层页面跳转.
