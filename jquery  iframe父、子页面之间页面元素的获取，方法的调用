@@ -1,0 +1,37 @@
+一、jquery 父、子页面之间页面元素的获取，方法的调用：
+
+1. 父页面获取子页面元素：
+    格式：$("#iframe的ID").contents().find("#iframe中的控件ID").click(); 
+    实例：$("#ifm").contents().find("#iBtnOk").click(); // ifm 为 <iframe> 标签 id; iBtnOk 为子页面按钮 id
+ 
+2. 父页面调用子页面方法：
+    格式：$("#iframe的ID")[0].contentWindow.iframe方法(); 
+    实例：$("#ifm")[0].contentWindow().iClick(); // ifm 为 <iframe> 标签 id; iClick为子页面 js 方法
+ 
+ 
+3. 子页面获取父页面元素：
+ 
+    格式：$("#父页面元素id" , parent.document);
+ 
+    实例：$("#pBtnOk" , parent.document).click(); // pBtnOk 为父页面标签 id
+
+ 
+
+二、原生 js 父页面元素的获取，方法的调用：
+
+ 
+1. 子页面调用父页面方法：
+ 
+    格式：parent.父页面方法
+ 
+    实例：parent.pClick(); // pClick 为父页面 js 方法
+ 
+ 
+ 
+2. 子页面获取父页面元素：
+ 
+ 
+    格式：window.parent.document.getElementById("父窗口元素ID");
+ 
+ 
+    实例：window.parent.document.getElementById("pBtnOk");// pBtnOk为父页面标签 id
