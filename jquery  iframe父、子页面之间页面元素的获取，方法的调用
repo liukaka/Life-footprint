@@ -3,10 +3,12 @@
 1. 父页面获取子页面元素：
     格式：$("#iframe的ID").contents().find("#iframe中的控件ID").click(); 
     实例：$("#ifm").contents().find("#iBtnOk").click(); // ifm 为 <iframe> 标签 id; iBtnOk 为子页面按钮 id
+   
  
 2. 父页面调用子页面方法：
     格式：$("#iframe的ID")[0].contentWindow.iframe方法(); 
     实例：$("#ifm")[0].contentWindow().iClick(); // ifm 为 <iframe> 标签 id; iClick为子页面 js 方法
+      $("父页面元素", parent.document).width($("form", parent.document).width());
  
  
 3. 子页面获取父页面元素：
@@ -35,3 +37,6 @@
  
  
     实例：window.parent.document.getElementById("pBtnOk");// pBtnOk为父页面标签 id
+
+
+
