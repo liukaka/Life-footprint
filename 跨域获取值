@@ -1,0 +1,35 @@
+ a页面需要获取到在不同域下b页面的值
+ 
+ 
+ a页面代码
+ proxy('http://www.xorder.com.cn/XIAOQ/php/app.php?widget-iframe-content', function(data){
+        console.log(data);
+    });
+    function proxy(url, func){
+        debugger
+        var isFirst = true,
+                ifr = document.createElement('iframe'),
+                loadFunc = function(){
+                    if(isFirst){
+                        ifr.contentWindow.location = 'http://localhost:63342/12.5/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F.html';
+                        isFirst = false;
+                    }else{
+                        func(ifr.contentWindow.name);
+                        ifr.contentWindow.close();
+                        document.body.removeChild(ifr);
+                        ifr.src = '';
+                        ifr = null;
+                    }
+                };
+
+        ifr.src = url;
+        ifr.style.display = 'none';
+        if(ifr.attachEvent) ifr.attachEvent('onload', loadFunc);
+        else ifr.onload = loadFunc;
+        document.body.appendChild(ifr);
+    }
+    b页面代码
+            window.name = "想要获取的值";
+            
+            
+            http://blog.csdn.net/joyhen/article/details/21631833
