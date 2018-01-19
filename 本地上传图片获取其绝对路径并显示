@@ -1,0 +1,9 @@
+ $("input[type='file']").on('change', function () {
+                var oFReader = new FileReader();
+                var file = document.getElementById('pic_adds_2').files[0];
+                oFReader.readAsDataURL(file);
+                oFReader.onloadend = function (oFRevent) {
+                    var src = oFRevent.target.result;
+                   src即为上传图片的路径；
+                }
+            });
