@@ -1,0 +1,487 @@
+1.Pushlet推送是一种将java后台数据推送到web页面的框架技术
+2.首先，需要导入从Pushlet官方下载js文件和jar包
+3.接下来配置web.xml。
+ 如：<?xml version="1.0" encoding="UTF-8"?>  
+  <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">  
+    <welcome-file-list>  
+      <welcome-file>page/index.jsp</welcome-file>  
+    </welcome-file-list>  
+    <servlet>  
+      <servlet-name>pushlet</servlet-name>  
+      <servlet-class>nl.justobjects.pushlet.servlet.Pushlet</servlet-class>  
+      <load-on-startup>1</load-on-startup>  
+    </servlet>  
+    <servlet-mapping>  
+      <servlet-name>pushlet</servlet-name>  
+      <url-pattern>/pushlet.srv</url-pattern>  
+    </servlet-mapping>  
+  </web-app>  
+4.由于Pushlet的jajax-pushlet-client.js中获取的项目路径时，是默认当作用户放置ajax-pushlet-client.js在web根目录下的，若放置到其它子目录位置时，在获取web项目路径的时项目路径会加上子目录路径，这样去访问pushlet的java服务时就会找不到。所以，这里我们会改写ajax-pushlet-client.js中的获取web项目路径的方法。
+原始获取web项目路径的方法如下：
+ _getWebRoot: function() {  
+    /** Return directory of this relative to document URL. */  
+    if (PL.webRoot != null) {  
+        return PL.webRoot;  
+    }  
+    //derive the baseDir value by looking for the script tag that loaded this file  
+    var head = document.getElementsByTagName('head')[0];  
+    var nodes = head.childNodes;  
+    for (var i = 0; i < nodes.length; ++i) {  
+        var src = nodes.item(i).src;  
+        if (src) {  
+            var index = src.indexOf("ajax-pushlet-client.js");  
+            if (index >= 0) {  
+                index = src.indexOf("lib");  
+                PL.webRoot = src.substring(0, index);  
+                break;  
+            }  
+        }  
+    }  
+    return PL.webRoot;  
+},  
+ 改写后获取web项目路径的的方法如下：
+ _getWebRoot: function() {  
+    /** Return directory of this relative to document URL. */  
+    if (PL.webRoot != null) {  
+        return PL.webRoot;  
+    }  
+    //derive the baseDir value by looking for the script tag that loaded this file  
+    //获取当前网址，如： http://localhost:8080/PushletNote/index.jsp  
+    var webPath = window.document.location.href;  
+    //获取主机地址之后的目录，如： /PushletNote/index.jsp  
+    var pathName = window.document.location.pathname;  
+    //获取主机地址，如： http://localhost:8080  
+    var hostPaht = webPath.substring(0,webPath.indexOf(pathName));  
+    //获取带"/"的项目名，如：/Pushlet   
+    var projectName = pathName.substring(0,pathName.substr(1).indexOf('/')+1);  
+    PL.webRoot = hostPaht + projectName + "/";  
+    return PL.webRoot;  
+},  
+以下三种推送方式的实现都在以上配置的基础上进行。
+index.jsp的代码作用是为了方便统一管理三种方式，代码如下：
+[html] 
+<%@ page language="java" contentType="text/html; charset=UTF-8"  
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html>  
+    <head>  
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+        <title>Pushlet主页</title>  
+        <style type="text/css">  
+            *{  
+                margin:0px auto;  
+                padding:0px;  
+                text-decoration: none;  
+                list-style:none;  
+                font-size:12px;  
+            }  
+            #main{  
+                margin-top:20px;  
+                width:500px;  
+                height:600px;  
+                background:#eee;  
+                border-radius:5px;  
+                padding-left:30px;  
+                padding-top:30px;  
+            }  
+            .list{  
+                  
+            }  
+            .info{  
+                margin-left:10px;  
+            }  
+        </style>  
+    </head>  
+    <body>  
+        <div id="main">  
+            <div class="list">*<a class="info" href="./page/timing_get_pull.jsp">服务向页面定时周期性推送消息Demo</a></div>  
+            <div class="list">*<a class="info" href="./page/auto_get_pull.jsp">服务按某种需求向页面推送消息Demo</a></div>  
+            <div class="list">*<a class="info" href="./page/one_to_one_get_pull.jsp">一对一推送消息Demo</a></div>  
+        </div>  
+    </body>  
+</html>  
+
+
+定时周期性推送：
+
+这种方式是在java代码中配置休眠时间，每隔一定时间向web页面推送一次消息，只要web页面js中配置了启动监听，就能获取相应数据。
+java代码如下：
+[java] 
+package com.pushlet;  
+  
+import nl.justobjects.pushlet.core.Event;  
+import nl.justobjects.pushlet.core.EventPullSource;  
+  
+/** 
+ * @ProjectName:PushletNote 
+ * @ClassName:PushletHelper 
+ * @author 御兰草 
+ * @email lujiafayx@163.com 
+ * @date 2014年10月10日 
+ * @Description:无 
+ */  
+public class PushletHelper {  
+    static public class PushletImpl extends EventPullSource{  
+        //定义临时数字静态变量  
+        private int num = 0;  
+  
+        /** 
+         * 休眠1秒执行一次pullEvent方法 
+         */  
+        @Override  
+        protected long getSleepTime() {  
+            return 1000;  
+        }  
+  
+        /* (non-Javadoc) 
+         * @see nl.justobjects.pushlet.core.EventPullSource#pullEvent() 
+         */  
+        @Override  
+        protected Event pullEvent() {  
+            Event event = Event.createDataEvent("/pushlet/timing");  
+            event.setField("result", num);  
+            num++;  
+            return event;  
+        }  
+          
+    }  
+}  
+web页面代码如下（这里我的jsp文件名为timing_get_pull.jsp）：
+[html] 
+<%@ page language="java" contentType="text/html; charset=UTF-8"  
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html>  
+    <head>  
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+        <meta http-equiv="Pragma" content="no-cache" />  
+        <title>服务向页面定时周期性推送消息Demo</title>  
+        <script type="text/javascript" src='../js/jquery-1.10.2.js'></script>  
+        <script type="text/javascript" src='../js/ajax-pushlet-client.js'></script>  
+        <script type="text/javascript">  
+            function begin(){  
+                PL._init();   
+                PL.joinListen('/pushlet/timing');  
+            }  
+              
+            //Pushlet的js中封装方法,产生消息  
+            function onData(event) {   
+                $("#info").text(event.get("result"));  
+            }  
+              
+            function stop(){  
+                //离开  
+                PL.leave();  
+            }  
+        </script>  
+    </head>  
+    <body>  
+        <div style="margin:0px auto;width:600px;height:400px;background:#eee;border-radius:5px;">  
+            <button onclick="begin();">开始</button>  
+            <a style="text-decoration:none;float:right;font-size:12px;" href="../index.jsp">返回</a>  
+            <center id='info'>显示从后台获取的数据</center>  
+            <button onclick="stop();">停止</button>  
+            <fieldset style="margin-top:30px;padding:0px;width:596px;height:auto;">  
+                <legend>描述</legend>  
+                <p style="text-indent:2em;font-size:12px;">  
+                    这种推送方式，需要在sources.properties中配置重写的EventPullSource类路径。其在程序启动时，后代代码即开始执行，每隔一定时间（getSleepTime方法返回的休眠时间）执行一次pullEvent方法。  
+                    js中的Pushlet初始化、监听和停止只能改变去后台获取数据的时间，而不会改变后台Pushlet代码的执行情况。  
+                </p>  
+            </fieldset>  
+        </div>  
+    </body>  
+</html>
+接下来要在sources.properties文件中配置java文件的全名：
+[java]
+#   
+# Properties file for EventSource objects to be instantiated.  
+#  
+# Place this file in the CLASSPATH (e.g. WEB-INF/classes) or directly under WEB-INF.  
+#  
+# $Id: sources.properties,v 1.2 2007/11/10 14:12:16 justb Exp $  
+#  
+# Each EventSource is defined as <key>=<classname>  
+# 1. <key> should be unique within this file but may be any name  
+# 2. <classname> is the full class name  
+#  
+#  
+# Define Pull Sources here. These classes must be derived from  
+# nl.justobjects.pushlet.core.EventPullSource  
+# Inner classes are separated with a $ sign from the outer class.  
+   
+# source1=nl.justobjects.pushlet.test.TestEventPullSources$TemperatureEventPullSource  
+# source2=nl.justobjects.pushlet.test.TestEventPullSources$SystemStatusEventPullSource  
+# source3=nl.justobjects.pushlet.test.TestEventPullSources$PushletStatusEventPullSource  
+# source4=nl.justobjects.pushlet.test.TestEventPullSources$AEXStocksEventPullSource  
+# source5=nl.justobjects.pushlet.test.TestEventPullSources$WebPresentationEventPullSource  
+# source6=nl.justobjects.pushlet.test.TestEventPullSources$PingEventPullSource  
+  
+source1= com.pushlet.PushletHelper$PushletImpl  
+  
+# TO BE DONE IN NEXT VERSION  
+# define Push Sources here. These must implement the interface  
+# nl.justobjects.pushlet.core.EventSource  
+这样，在页面进行监听就能获取到后台定时推送的消息了。
+
+
+按监听路径推送：
+
+这种方式是在web客户端启动监听后，若java服务在某种需求下向对应监听路径推送消息，web客户端就能获取推送消息。
+java代码如下：
+
+[java]
+package com.pushlet;  
+  
+import java.io.IOException;  
+  
+import javax.servlet.ServletException;  
+import javax.servlet.annotation.WebServlet;  
+import javax.servlet.http.HttpServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+  
+import nl.justobjects.pushlet.core.Dispatcher;  
+import nl.justobjects.pushlet.core.Event;  
+  
+/** 
+ * Servlet implementation class PushletServlet 
+ */  
+@WebServlet("/PushletServlet")  
+public class PushletServlet extends HttpServlet {  
+    private static final long serialVersionUID = 1L;  
+         
+    /** 
+     * @see HttpServlet#HttpServlet() 
+     */  
+    public PushletServlet() {  
+        super();  
+        // TODO Auto-generated constructor stub  
+    }  
+  
+    /** 
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) 
+     */  
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
+        String str = request.getParameter("count");  
+        if(null != str){  
+            Integer count = Integer.valueOf(str);  
+            Event  event = Event.createDataEvent("/pushlet/auto");     
+            event.setField("message", ++count);  
+            //将消息推送到web客户端  
+            Dispatcher.getInstance().multicast(event);  
+        }  
+    }  
+  
+    /** 
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) 
+     */  
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
+        doGet(request, response);  
+    }  
+  
+}  
+web端代码如下（这里我的jsp文件名为auto_get_pull.jsp）：
+<%@ page language="java" contentType="text/html; charset=UTF-8"  
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html>  
+    <head>  
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+        <title>服务按某种需求向页面推送消息Demo</title>  
+        <script type="text/javascript" src='../js/jquery-1.10.2.js'></script>  
+        <script type="text/javascript" src='../js/ajax-pushlet-client.js'></script>  
+        <script type="text/javascript">  
+            //启动监听  
+            function begin(){  
+                PL._init();   
+                PL.joinListen('/pushlet/auto');  
+            }  
+              
+            var xhr = new XMLHttpRequest();  
+            //触发服务方法，使其向页面推送消息  
+            function trigger(){  
+                var count = $("#count").text();  
+                var url = PL.webRoot + "PushletServlet?count=" + count;  
+                xhr.open("get", url, true);  
+                xhr.send(null);  
+            }  
+              
+            //Pushlet的js中封装方法,产生消息  
+            function onData(event) {   
+                $("#count").text(event.get("message"));  
+            }  
+              
+            function stop(){  
+                //离开  
+                PL.leave();  
+            }  
+        </script>  
+    </head>  
+    <body>  
+        <div style="margin:0px auto;width:600px;height:400px;background:#eee;border-radius:5px;">  
+            <button onclick="begin();">开始监听</button>  
+            <a style="text-decoration:none;float:right;font-size:12px;" href="../index.jsp">返回</a>  
+            <button onclick="trigger();">触发推送</button>  
+            <center id='info'>服务向客户端推送<span id="count" style="color:red;">0</span>次消息</center>  
+            <button onclick="stop();">停监听止</button>  
+            <fieldset style="margin-top:30px;padding:0px;width:596px;height:auto;">  
+                <legend>描述</legend>  
+                <p style="text-indent:2em;font-size:12px;">  
+                    这种推送方式，不需要在sources.properties中配置推送类路径。服务按照指定需求在一定条件向客户端推送消息，客户端开始监听后，若发现有看服务推送的消息，则获取返回。  
+                </p>  
+            </fieldset>  
+        </div>  
+    </body>  
+</html>  
+这样，在web客户端启动监听后，服务端向页面推送消息时web客户端就能接收到了。
+
+只要保证web客户端的监听路径和服务端推送路径相对应并且具有唯一性，这种方式也能实现点对点消息推送。
+
+
+
+点对点推送：
+
+这种推送方式是给每个启动监听的web客户端配置一个sessionid，这样就能唯一确定客户端对象，然后在服务上向特定用户推送消息，而相应web客户端再获取相应消息。
+这种推送方式也需要web客户端的监听路径和服务推送路径相一致，并且要重写Pushlet的SessionManager的创建session的方法。重写SessionManager创建session的方法通过继承SessionManger类来实现，代码如下：
+
+[java] 
+package com.util;  
+  
+import nl.justobjects.pushlet.core.Event;  
+import nl.justobjects.pushlet.core.Session;  
+import nl.justobjects.pushlet.core.SessionManager;  
+import nl.justobjects.pushlet.util.PushletException;  
+  
+public class PushletSessionManager extends SessionManager{  
+      
+    @Override  
+    public Session createSession(Event anEvent) throws PushletException {  
+        //Event的getField方法的第二个参数为当传递参数中不存在第一个参数字段时默认使用的值。  
+        return Session.create(anEvent.getField("userId", "visitor"));  
+    }  
+}  
+重写createSession方法完成后，需要将pushlet.properties中SessionManger的配置替换为重写的PushletSessionManger全类名。即：
+sessionmanager.class=com.util.SessionManager  
+替换为
+sessionmanager.class=com.util.PushletSessionManager  
+
+服务端推送消息java代码如下：
+[java] 
+package com.pushlet;  
+  
+import java.io.IOException;  
+import java.net.URLEncoder;  
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
+  
+import javax.servlet.ServletException;  
+import javax.servlet.annotation.WebServlet;  
+import javax.servlet.http.HttpServlet;  
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+  
+import nl.justobjects.pushlet.core.Dispatcher;  
+import nl.justobjects.pushlet.core.Event;  
+import nl.justobjects.pushlet.core.SessionManager;  
+  
+/** 
+ * Servlet implementation class OneToOneServlet 
+ */  
+@WebServlet("/OneToOneServlet")  
+public class OneToOneServlet extends HttpServlet {  
+    private static final long serialVersionUID = 1L;  
+         
+    /** 
+     * @see HttpServlet#HttpServlet() 
+     */  
+    public OneToOneServlet() {  
+        super();  
+        // TODO Auto-generated constructor stub  
+    }  
+      
+    private String format(Date date){  
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+        return sdf.format(date);  
+    }  
+  
+    /** 
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) 
+     */  
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
+        if(SessionManager.getInstance().hasSession("niko")){  
+            Event  event = Event.createDataEvent("/pushlet/onetoone");  
+            //加编码方式解决pushlet不能推送中文问题  
+            event.setField("message", URLEncoder.encode("推送时间：" + format(new Date())));  
+            Dispatcher.getInstance().unicast(event, "niko");//向ID为niko的用户推送  
+        }  
+          
+    }  
+  
+    /** 
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response) 
+     */  
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {  
+        doGet(request, response);  
+    }  
+  
+}  
+
+web客户端代码如下（这里我的jsp文件名为one_to_one_get_pull.jsp）：
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"  
+    pageEncoding="UTF-8"%>  
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html>  
+    <head>  
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+        <title>服务按某种需求向页面推送消息Demo</title>  
+        <script type="text/javascript" src='../js/jquery-1.10.2.js'></script>  
+        <script type="text/javascript" src='../js/ajax-pushlet-client.js'></script>  
+        <script type="text/javascript">  
+            //启动监听  
+            function begin(){  
+                PL.userId ="niko";  
+                PL._init();  
+                PL.joinListen("/pushlet/onetoone");  
+            }  
+              
+            var xhr = new XMLHttpRequest();  
+            //触发服务方法，使其向页面推送消息  
+            function trigger(){  
+                var url = PL.webRoot + "OneToOneServlet?";  
+                xhr.open("get", url, true);  
+                xhr.send(null);  
+            }  
+              
+            //Pushlet的js中封装方法,产生消息  
+            function onData(event) {  
+                //用decodeURIComponent方法解码  
+                $("#message").text(decodeURIComponent(event.get("message")));  
+            }  
+              
+            function stop(){  
+                //离开  
+                PL.leave();  
+            }  
+        </script>  
+    </head>  
+    <body>  
+        <div style="margin:0px auto;width:600px;height:400px;background:#eee;border-radius:5px;">  
+            <button onclick="begin();">开始监听</button>  
+            <a style="text-decoration:none;float:right;font-size:12px;" href="../index.jsp">返回</a>  
+            <button onclick="trigger();">触发推送</button>  
+            <center id='info'>服务向客户端推送为：<span id="message" style="color:red;"></span></center>  
+            <button onclick="stop();">停监听止</button>  
+            <fieldset style="margin-top:30px;padding:0px;width:596px;height:auto;">  
+                <legend>描述</legend>  
+                <p style="text-indent:2em;font-size:12px;">  
+                    点对点推送消息，这种方式需要重写或改写SessionManager类，然后在pushlet.properties配置文件中的sessionmanager.class属性域改写的SessionManger类路径对应，并在pushlet的js中添加userId属性，并添加传递参数的代码。若不在js中添加userId（次要），不重写Session的createSession方法，则默认所有请求、监听都使用默认创建的Session用户visitor。  
+                </p>  
+                <p style="text-indent:2em;font-size:12px;">  
+                    PS:pushlet推送消息不能直接推送中文，需要进行转码再推送。通过方法SessionManager.getInstance().hasSession("niko")获取的boolean值反应该用户是否处于监听状态，若用户已在监听，则返回true，若已调用PL.leave()方法，则SessionManager.getInstance().hasSession("niko")的返回值为false。Event的getField方法的第二个参数为当传递参数中不存在第一个参数字段时默认使用的值。  
+                </p>  
+            </fieldset>  
+        </div>  
+    </body>  
+</html>  
+这样，即实现了消息的点对点推送。这里改写SessionManger并配置不会影响前两种推送方式的执行。
